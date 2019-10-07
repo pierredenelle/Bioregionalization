@@ -1,0 +1,4 @@
+cd Data/Dropbox/Research/Articles/InProgress/Biogeo2/OSLOM2/
+
+./oslom_undir -r 1 -f net.txt -w -t 0.1
+
