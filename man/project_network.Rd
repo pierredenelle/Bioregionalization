@@ -20,10 +20,11 @@ the similarity being based upon the sites each pair of species has in common.
 \section{Note}{}
 
 \examples{
-ex <- data.frame(sites = c(rep("A", 2), rep("B", 3)),
-species = c("a", "b", "a", "c", "d"),
-count = c(10, 100, 1, 20, 50))
+ex <- data.frame(sites = c(rep("A", 2), rep("B", 3), rep("C", 2)),
+species = c("a", "b", "a", "c", "d", "b", "d"),
+count = c(10, 100, 1, 20, 50, 10, 20))
 
-ex_mat <- contigency(dat = ex, sp = "species", site = "sites", ab = "count")
+ex_mat <- contingency(dat = ex, sp = "species", site = "sites", ab = "count",
+binary = TRUE)
 project_network(ex_mat, similarity = "simpson")
 }

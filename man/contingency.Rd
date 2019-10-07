@@ -24,9 +24,9 @@ Converts a data.frame into a contingency table.
 \section{Note}{}
 
 \examples{
-ex <- data.frame(sites = c(rep("A", 2), rep("B", 3)),
-species = c("a", "b", "a", "c", "d"),
-count = c(10, 100, 1, 20, 50))
+ex <- data.frame(sites = c(rep("A", 2), rep("B", 3), rep("C", 2)),
+species = c("a", "b", "a", "c", "d", "b", "d"),
+count = c(10, 100, 1, 20, 50, 10, 20))
 
-contigency(dat = ex, sp = "species", site = "sites", ab = "count")
+contingency(dat = ex, sp = "species", site = "sites", ab = "count")
 }

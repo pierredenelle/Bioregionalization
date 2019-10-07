@@ -40,6 +40,9 @@ project_network <- function(contingency_mat, similarity = "simpson"){
 
   colnames(abc) <- c("id1", "id2", "a", "b", "c")
 
+  # Conversion as data.frame
+  abc <- as.data.frame(abc)
+
   # Similarity metric
   if(similarity == "simpson"){
     abc$simpson <- 1 - pmin(abc$b, abc$c)/(abc$a + pmin(abc$b, abc$c))
