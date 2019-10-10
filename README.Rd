@@ -16,4 +16,4 @@ devtools::install_github("pierredenelle/Bioregionalization")
 ```
 
 ## Dependencies
-`Bioregionalization` depends on `dplyr`
+`Bioregionalization` depends on `dplyr`, `vegan`, `reshape2`, `Rcpp` and `SMUT`.
