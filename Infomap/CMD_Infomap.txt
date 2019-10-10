@@ -1,0 +1,10 @@
+cd Dropbox/Research/Articles/InProgress/Biogeo2/Infomap/
+
+
+
+./Infomap -N 10 --undirected --two-level --map --clu --tree --markov-time 0.5 NetNat5.txt NetNat5
+
+
+
+./Infomap -N 10 --undirected --two-level --skip-adjust-bipartite-flow --map --clu -i'bipartite' infobip.txt infobip
+
