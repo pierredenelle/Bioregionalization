@@ -19,14 +19,14 @@ project_network <- function(contingency_mat, similarity = "simpson"){
   contingency_mat <- as.matrix(contingency_mat)
 
   if(similarity == "bray"){
-    require(vegan)
+    require(ecodist)
     require(reshape2)
-    bray <- vegdist(contingency_mat, method = "bray")
+    bray <- bcdist(contingency_mat, rmzero = FALSE)
     # Convert distance matrix into data.frame
-    abc <- melt(as.matrix(bray), varnames = c("id1", "id2"))
+    abc <- melt(as.matrix(bray), varnames = c("site1", "site2"))
     # Remove diagonal
     abc <- abc[which(abc$site1 != abc$site2), ]
-    colnames(abc) <- c("id1", "id2", "bray")
+    colnames(abc) <- c("site1", "site2", "bray")
 
   } else{
 
