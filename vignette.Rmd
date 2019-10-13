@@ -11,29 +11,31 @@ library(dplyr)
 
 ```
 
-```{r dataset}
-# Example dataset with 100 sites and number of species between 1 and 10
-set.seed(1)
-ex <- data.frame(
-  site = as.character(unlist(sapply(paste0("site", seq(1:100)),
-                                    function(x) rep(x, sample(1:10, 1))))))
-ex <- ex %>%
-  group_by(site) %>%
-  mutate(sp = sample(letters[seq(1:20)], n()), # identity of species
-         ab = sample(c(1:10), n())) %>% # abundances between 1 & 10 individuals
-  ungroup() %>%
-  as.data.frame()
+`virtual_sp` is a dataset simulated that comes with the package.
+This dataset relies on the response curve of virtual species to a virtual
+raster.
+The virtual raster contains 10000 cells and was simulated using `gstat`
+R package.
+[See here for details.](http://santiago.begueria.es/2010/10/generating-spatially-correlated-random-fields-with-r/)
 
-# Associate coordinates
-coord <- data.frame(site = paste0("site", seq(1:100)),
-                    x = seq(1, 100),
-                    y = seq(1, 100))
+Based on this layer, the `virtualspecies` R package (Leroy et al. 2015)
+was used to simulate the response curve of 100 virtual species.
+A Gaussian curve was used.
+The mean and standard deviation of the response function was varying among
+species, such as some of them are more or less generalists/specialists.
+
+For every species in every cell, we could derive a suitability index.
+Species with suitability index inferior to 0.15 were arbitrarily set absent.
+
+```{r dataset}
+# Import virtual dataset
+data("virtual_sp")
 ```
 
 The first step is to convert the data.frame into a contingency table.
 
 ```{r contingency_matrix}
-sp_mat <- contingency(ex, "sp", "site", "ab", binary = TRUE)
+sp_mat <- contingency(virtual_sp, "sp", "site", "ab", binary = TRUE)
 ```
 
 We then need to project the network.
