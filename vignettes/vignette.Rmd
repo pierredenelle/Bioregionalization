@@ -98,7 +98,7 @@ plot_grid(
   sp_df %>%
     distinct(site, .keep_all = TRUE) %>%
     ggplot(aes(x, y)) +
-    geom_tile(aes(fill = sim1, color = sim1),
+    geom_tile(aes(fill = env, color = env),
               alpha = 0.8, width = 1, height = 1) +
     scale_color_distiller("Value", palette = "OrRd") +
     scale_fill_distiller("Value", palette = "OrRd") +
