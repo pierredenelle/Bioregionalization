@@ -28,9 +28,10 @@ CA_cluster <- function(dat){
 # With FactoMineR
 # library(FactoMineR)
 # CA_site_sp2 <- CA(dat, graph = FALSE)
-# CA_hcpc <- HCPC(CA_site_sp2, nb.clust = 3, graph = FALSE)
+# nb.clust = -1 => tree automatically cut on the sugested level
+# CA_hcpc <- HCPC(CA_site_sp2, nb.clust = -1, graph = FALSE)
 # plot(CA_hcpc, axes = 1:2)
 #
-# str(CA_hcpc_hcpc$desc.ind)
-# head(CA_hcpc_hcpc$desc.var$`1`) # cluster for species
-# CA_hcpc_hcpc$desc.ind # cluster for communities
+# str(CA_hcpc$desc.ind)
+# head(CA_hcpc$desc.var$`1`) # cluster for species
+# CA_hcpc$desc.ind # cluster for communities

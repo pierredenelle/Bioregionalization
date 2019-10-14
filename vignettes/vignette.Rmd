@@ -77,17 +77,18 @@ Here:
 Converting the OSLOM .tp file into a list.
 
 ```{r conversion_OSLOM}
-res <- readLines("OSLOM2/vignette.txt_oslo_files/tp")
+res <- readLines("../OSLOM2/vignette.txt_oslo_files/tp")
 oslom_vignette <- oslom_output(res, sp_mat)
 length(unique(oslom_vignette$bioregion))
 ```
 
 Function to compute zscores.
 
-Example with CA analysis and k-means clustering.
+Example with Ward analysis and k-means clustering.
 
-```{r CA_cluster, eval = FALSE}
-CA_res <- CA_cluster(sp_mat)
+```{r CA_cluster}
+# CA_res <- CA_cluster(sp_mat)
+ward_res <- ward_cluster(sp_mat)
 ```
 
 Projection on a map.
@@ -106,7 +107,7 @@ plot_grid(
     labs(title = "Environmental variable") +
     theme(panel.background = element_rect(fill = "transparent",colour = NA)),
   
-  # Plot of bioregions
+  # Plot of OSLOM bioregions
   sp_df %>%
     left_join(oslom_vignette, by = "site") %>%
     distinct(site, .keep_all = TRUE) %>%
@@ -117,6 +118,19 @@ plot_grid(
     scale_fill_viridis_d("Bioregions", option = "E") +
     coord_equal() +
     labs(title = "OSLOM bioregions") +
+    theme(panel.background = element_rect(fill = "transparent",colour = NA)),
+  
+  # Plot of Ward bioregions
+    sp_df %>%
+    left_join(ward_res, by = "site") %>%
+    distinct(site, .keep_all = TRUE) %>%
+    ggplot(aes(x, y)) +
+    geom_tile(aes(fill = as.factor(cluster), color = as.factor(cluster)),
+              alpha = 0.8, width = 1, height = 1) +
+    scale_color_viridis_d("Bioregions", option = "E") +
+    scale_fill_viridis_d("Bioregions", option = "E") +
+    coord_equal() +
+    labs(title = "CA bioregions") +
     theme(panel.background = element_rect(fill = "transparent",colour = NA)),
   
   nrow = 1)

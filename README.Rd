@@ -17,4 +17,4 @@ devtools::install_github("pierredenelle/Bioregionalization")
 
 ## Dependencies
 `Bioregionalization` depends on `dplyr`, `ecodist`, `reshape2`, `DescTools`,
-`ade4`, `sf`, `ggplot2`, `Rcpp` and `SMUT`.
+`ade4`, `cluster`, `sf`, `ggplot2`, `Rcpp` and `SMUT`.
