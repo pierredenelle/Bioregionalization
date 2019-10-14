@@ -6,6 +6,7 @@ library(cowplot) # combining plots
 library(ggplot2) # plot
 library(raster)
 library(virtualspecies) # simulate virtual species
+library(dplyr)
 
 ## Virtual raster layer -------------------------------------------------------
 # http://santiago.begueria.es/2010/10/generating-spatially-correlated-random-fields-with-r/
