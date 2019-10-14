@@ -1,13 +1,33 @@
 ---
-title: "Vignette"
-output: html_document
+title: "Tutorial for Bioregionalization R package"
+output: 
+  - pdf_document
+  - html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+<style>
+body {
+text-align: justify}
+</style>
 
-library(Bioregionalization)
-library(dplyr)
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE,
+                      fig.width = 12, fig.height = 12)
+# Packages --------------------------------------------------------------------
+suppressPackageStartupMessages({
+  suppressWarnings({
+    library(Bioregionalization)
+    library(dplyr)
+    library(sf)
+    library(ggplot2)
+    library(cowplot)
+  })
+})
+
+options(tinytex.verbose = TRUE)
 
 ```
 
@@ -66,13 +86,53 @@ Function to compute zscores.
 
 Example with CA analysis and k-means clustering.
 
-```{r CA_cluster}
+```{r CA_cluster, eval = FALSE}
 CA_res <- CA_cluster(sp_mat)
 ```
 
 Projection on a map.
 
+```{r map}
+plot_grid(
+  # Plot of environmental values
+  sp_df %>%
+    distinct(site, .keep_all = TRUE) %>%
+    ggplot(aes(x, y)) +
+    geom_tile(aes(fill = sim1, color = sim1),
+              alpha = 0.8, width = 1, height = 1) +
+    scale_color_distiller("Value", palette = "OrRd") +
+    scale_fill_distiller("Value", palette = "OrRd") +
+    coord_equal() +
+    labs(title = "Environmental variable") +
+    theme(panel.background = element_rect(fill = "transparent",colour = NA)),
+  
+  # Plot of bioregions
+  sp_df %>%
+    left_join(oslom_vignette, by = "site") %>%
+    distinct(site, .keep_all = TRUE) %>%
+    ggplot(aes(x, y)) +
+    geom_tile(aes(fill = as.factor(bioregion), color = as.factor(bioregion)),
+              alpha = 0.8, width = 1, height = 1) +
+    scale_color_viridis_d("Bioregions", option = "E") +
+    scale_fill_viridis_d("Bioregions", option = "E") +
+    coord_equal() +
+    labs(title = "OSLOM bioregions") +
+    theme(panel.background = element_rect(fill = "transparent",colour = NA)),
+  
+  nrow = 1)
 
+# With sf
+# res_map <- sp_df %>%
+#   left_join(oslom_vignette, by = "site") %>%
+#   st_as_sf(coords = c("x", "y")) %>%
+#   group_by(bioregion) %>% 
+#   summarise()
+# 
+# ggplot(res_map) +
+#   geom_sf(aes(fill = as.factor(bioregion), color = as.factor(bioregion))) +
+#   scale_fill_viridis_d("Bioregions") +
+#   scale_color_viridis_d("Bioregions") +
+#   labs(x = "Longitude", y = "Latitude")
 
-
+```
 

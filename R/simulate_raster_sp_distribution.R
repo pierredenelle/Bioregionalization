@@ -73,6 +73,9 @@ sp_df <- sp_df[which(sp_df$suitab != 0), ]
 # Add site and environment columns
 sp_df <- left_join(sp_df, env_dat, by = c("x", "y"))
 
+# Renaming environmental column
+colnames(sp_df)[colnames(sp_df) == "sim1"] <- "env"
+
 # If suitability inferior to 0.15, suitab = 0 (make some species absent)
 # sp_df$suitab <- ifelse(sp_df$suitab < 0.15, 0, sp_df$suitab)
 # Remove absent species

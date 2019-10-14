@@ -40,6 +40,9 @@ oslom_output <- function(dat, contingency_mat){
     bioregion_oslom <- bioregion_oslom[!duplicated(bioregion_oslom$id), ]
   }
 
+  # Maximum similarity
+  # CREATE FUNCTION REASSIGN => also Ward
+
   warning("WARNING: the order of the rownames of the contingency table
     has to be identical before running OSLOM and when running this function!!")
 
