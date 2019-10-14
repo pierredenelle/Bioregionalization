@@ -3,7 +3,7 @@ title: "Vignette"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
 library(Bioregionalization)
@@ -35,7 +35,7 @@ data("virtual_sp")
 The first step is to convert the data.frame into a contingency table.
 
 ```{r contingency_matrix}
-sp_mat <- contingency(sp_df, "sp", "site", "ab", binary = TRUE)
+sp_mat <- contingency(sp_df, "sp", "site", "pa", binary = TRUE)
 ```
 
 We then need to project the network.
@@ -59,6 +59,7 @@ Converting the OSLOM .tp file into a list.
 ```{r conversion_OSLOM}
 res <- readLines("OSLOM2/vignette.txt_oslo_files/tp")
 oslom_vignette <- oslom_output(res, sp_mat)
+length(unique(oslom_vignette$bioregion))
 ```
 
 Function to compute zscores.

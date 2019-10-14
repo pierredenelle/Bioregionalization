@@ -11,7 +11,7 @@ library(virtualspecies) # simulate virtual species
 # http://santiago.begueria.es/2010/10/generating-spatially-correlated-random-fields-with-r/
 
 # XY coordinates
-xy <- expand.grid(1:100, 1:100)
+xy <- expand.grid(1:10, 1:10)
 names(xy) <- c("x","y")
 # Spatial model
 g_ex <- gstat(formula = z ~ 1, locations  = ~x+y, dummy = TRUE,
@@ -28,18 +28,20 @@ plot_grid(spplot(obj = yy[1]), spplot(obj = yy[2]),
           spplot(obj = yy[3]), spplot(obj = yy[4]),
           nrow = 2)
 
-# yy2 <- rasterToPoints(yy[1])
+# Data.frame with pixel and environmental value
+env_dat <- cbind(yy[1]@coords, yy[1]@data)
+env_dat$site <- paste0("site", 1:nrow(env_dat))
 
 ## Virtual species ------------------------------------------------------------
 # http://borisleroy.com/files/virtualspecies-tutorial.html
 
 # Generating 100 species with mean all along Bio1 gradient
-env_value <- yy[1]@data$sim1
+env_value <- env_dat$sim1
 mean_gdt <- sort(rep(seq(min(env_value), max(env_value), length.out = 10), 10))
-sd_gdt <- rep(seq(sd(env_value), 2*sd(env_value), length.out = 10), 10)
+sd_gdt <- rep(seq(var(env_value), sd(env_value), length.out = 10), 10)
 
 # Generating 100 species with 500 occurrences
-sampled_points <- rep(500, length(yy[1]@data$sim1))
+sampled_points <- rep(500, length(env_dat$sim1))
 env_raster <- stack(yy[1])
 
 sp_df <- c()
@@ -52,29 +54,28 @@ for (i in 1:100){
   # plotResponse(sp_i)
 
   # Conversion to presence/absence
-  # pa_i <- convertToPA(sp_i, plot = FALSE, beta = 0.7)
+  pa_i <- convertToPA(sp_i, plot = FALSE, beta = 0.7)
 
-  occ_i <- data.frame(rasterToPoints(sp_i$suitab.raster))
-  occ_i$sp <- paste0("sp", i)
+  occ_i <- data.frame(sp = paste0("sp", i),
+                      rasterToPoints(pa_i$suitab.raster),
+                      pa = data.frame(rasterToPoints(pa_i$pa.raster))$layer)
+  colnames(occ_i)[colnames(occ_i) == "layer"] <- "suitab"
+
   # Binding results
   sp_df <- rbind(sp_df, occ_i)
   print(i)
 }
 
-colnames(sp_df)[colnames(sp_df) == "layer"] <- "ab"
-
 # Removing lines with null abundances
-sp_df <- sp_df[which(sp_df$ab != 0), ]
+sp_df <- sp_df[which(sp_df$suitab != 0), ]
 
-# Add site column
-xy$site <- paste0("site", 1:nrow(xy))
-sp_df <- left_join(sp_df, xy, by = c("x", "y"))
+# Add site and environment columns
+sp_df <- left_join(sp_df, env_dat, by = c("x", "y"))
 
-# If suitability inferior to 0.15, ab = 0 (make some species absent)
-sp_df$ab <- ifelse(sp_df$ab < 0.15, 0, sp_df$ab)
-
+# If suitability inferior to 0.15, suitab = 0 (make some species absent)
+# sp_df$suitab <- ifelse(sp_df$suitab < 0.15, 0, sp_df$suitab)
 # Remove absent species
-sp_df <- sp_df[which(sp_df$ab != 0), ]
+# sp_df <- sp_df[which(sp_df$suitab != 0), ]
 
 # Save sp_df as RData
 save(sp_df, file = "data/virtual_sp.RData")

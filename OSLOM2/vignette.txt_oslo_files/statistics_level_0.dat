@@ -1,5 +1,5 @@
-number of modules: 0
-number of covered nodes: 0 fraction of homeless nodes: 1
-average number of memberships of covered nodes: -nan
-average community size: -nan
-average degree of homeless nodes: 75.66 dev: 18.9733
+number of modules: 2
+number of covered nodes: 100 fraction of homeless nodes: 0
+average number of memberships of covered nodes: 1.22
+average community size: 61
+average degree of homeless nodes: 0 dev: 0

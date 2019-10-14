@@ -67,5 +67,11 @@ project_network <- function(contingency_mat, similarity = "simpson"){
       abc$whittaker <- (abc$a + abc$b + abc$c)/((2*abc$a + abc$b + abc$c)/2)
     }
   }
+  # If contingency matrix has rownames, ressign them to abc data.frame
+  if(!is.null(rownames(contingency_mat))){
+    abc$id1_name <- rownames(sp_mat)[abc$id1]
+    abc$id2_name <- rownames(sp_mat)[abc$id2]
+  }
+
   return(abc)
 }
