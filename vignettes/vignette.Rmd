@@ -84,6 +84,16 @@ length(unique(oslom_vignette$bioregion))
 
 Function to compute zscores.
 
+```{r z_scores}
+
+tmp <- left_join(sp_df, oslom_vignette, by = "site")
+z_scores <- zscore(tmp, sp_col = "sp", site_col = "site",
+                   bioregion_col = "bioregion")
+```
+
+
+Interaction plots.
+
 Example with Ward analysis and k-means clustering.
 
 ```{r CA_cluster}
