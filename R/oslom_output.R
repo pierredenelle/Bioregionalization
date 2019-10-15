@@ -1,6 +1,8 @@
 
 oslom_output <- function(dat, contingency_mat){
 
+  require(dplyr)
+
   if(!is.matrix(contingency_mat)){
     stop("Contingency table should be a matrix with sites as rows and
          species as columns.")
@@ -34,14 +36,51 @@ oslom_output <- function(dat, contingency_mat){
     doublon <- table(bioregion_oslom$id)[table(bioregion_oslom$id) > 1]
     doublon <- data.frame(id = names(doublon),
                           nb_bioregion = as.numeric(doublon))
-    bioregion_oslom[which(bioregion_oslom$id %in% doublon$id), ]
 
     # Remove duplicates (first bioregion is assigned)
-    bioregion_oslom <- bioregion_oslom[!duplicated(bioregion_oslom$id), ]
-  }
+    # bioregion_oslom <- bioregion_oslom[!duplicated(bioregion_oslom$id), ]
 
-  # Maximum similarity
-  # CREATE FUNCTION REASSIGN => also Ward
+    # Maximum similarity => get score for each species
+    # then assign bioregion for which the score is maximal
+    # bioregion_oslom[which(bioregion_oslom$id %in% doublon$id), ]
+    score_sp <- c()
+    sp_mat_without_doublon <-
+      sp_mat[-as.numeric(as.character(doublon$id)), ]
+    for(i in 1:ncol(sp_mat)){
+      pres_com <-
+        names(sp_mat_without_doublon[, i][sp_mat_without_doublon[, i] > 0])
+      # Bioregion of these sites
+      max_bioregion <- table(
+        bioregion_oslom[which(bioregion_oslom$site %in% pres_com),
+                        "bioregion"])
+      max_bioregion <- names(which.max(max_bioregion))
+      score_sp <- rbind(score_sp,
+                        data.frame(sp = colnames(sp_mat)[i],
+                                   max_bioregion = max_bioregion))
+    }
+
+    doublon$bioregion <- NA
+    for(i in 1:length(doublon$id)){
+      i_sites <- sp_mat[as.numeric(as.character(doublon[i, "id"])), ]
+      i_sites <- i_sites[i_sites > 0]
+      choice <- score_sp[which(score_sp$sp %in% names(i_sites)),
+                         "max_bioregion"]
+      choice <- table(choice)
+      choice <- names(which.max(choice))
+      doublon[i, "bioregion"] <- choice
+    }
+    bioregion_oslom$id_oslom <- as.character(bioregion_oslom$id_oslom)
+    colnames(doublon)[colnames(doublon) == "id"] <- "id_oslom"
+    doublon <- left_join(doublon, bioregion_oslom[, c("id_oslom", "site")],
+                         by = c("id_oslom"))
+
+    bioregion_oslom <-
+      rbind(
+        bioregion_oslom[which(bioregion_oslom$id %in% doublon$id), ],
+        doublon[, c("id_oslom", "bioregion", "site")])
+
+    # CREATE FUNCTION REASSIGN => also Ward
+  }
 
   warning("WARNING: the order of the rownames of the contingency table
     has to be identical before running OSLOM and when running this function!!")

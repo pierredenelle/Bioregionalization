@@ -2,7 +2,10 @@
 title: "Tutorial for Bioregionalization R package"
 output: 
   - pdf_document
-  - html_document
+vignette: >
+  %\VignetteIndexEntry{Tutorial for Bioregionalization R package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8} 
 editor_options: 
   chunk_output_type: console
 ---
@@ -117,25 +120,16 @@ tmp <- left_join(sp_df, oslom_vignette, by = "site")
 z_scores <- zscore(tmp, sp_col = "sp", site_col = "site",
                    bioregion_col = "bioregion")
 
-# top10 <- zscore_sp %>%
-#   group_by(bioregion_type, bioregion_value) %>%
-#   mutate(zscore = 100*(zscore-min(zscore))/ # convert zscore into percentages
-#            (max(zscore) - min(zscore))) %>%
-#   filter(n_i > quantile(n_i, 0.25)) %>% # remove 25% rarest species
-#   top_n(10, zscore) %>% # extract top 10
-#   mutate(rank = rank(-zscore, # ranking zcore in an ascending order
-#                      ties.method = "first")) %>% # if tie zscore, first species
-#   select(sp, bioregion_type, bioregion_value, zscore, rank) %>%
-#   mutate(zscore = round(zscore, 1)) %>% # rounding zscore to 1 digit
-#   as.data.frame()
-# 
-# top10_sp <- top10 %>%
-#   select(-zscore) %>% # remove zscore column
-#   group_by(bioregion_type, bioregion_value) %>%
-#   gather(key = sp_name, value = sp, -bioregion_type, -bioregion_value, -rank) %>%
-#   unite(sp_rank, sp_name, rank) %>%
-#   spread(sp_rank, sp) %>%
-#   as.data.frame()
+top10 <- z_scores %>%
+  group_by(bioregion) %>%
+  top_n(n = 10, zscore) %>% # extract top 10
+  mutate(rank = rank(-zscore, # ranking zcore in an ascending order
+                     ties.method = "first")) %>% # if tie zscore, first species
+  select(sp, bioregion, zscore, rank) %>%
+  mutate(zscore = round(zscore, 1)) %>% # rounding zscore to 1 digit
+  as.data.frame()
+
+knitr::kable(top10[which(top10$bioregion == "2"), ])
 
 ```
 
@@ -148,7 +142,6 @@ ex_lambda <- lambda(dat = z_scores, sp_col = "sp", zscore_col = "zscore",
 
 ex_lambda
 ```
-
 
 Example with Ward analysis and k-means clustering.
 
