@@ -50,12 +50,27 @@ Species with suitability index inferior to 0.15 were arbitrarily set absent.
 ```{r dataset}
 # Import virtual dataset
 data("virtual_sp")
+
+# Plot of environmental values
+sp_df %>%
+  distinct(site, .keep_all = TRUE) %>%
+  ggplot(aes(x, y)) +
+  geom_tile(aes(fill = env, color = env),
+            alpha = 0.8, width = 1, height = 1) +
+  scale_color_distiller("Value", palette = "OrRd") +
+  scale_fill_distiller("Value", palette = "OrRd") +
+  coord_equal() +
+  labs(title = "Environmental variable") +
+  theme(panel.background = element_rect(fill = "transparent",colour = NA))
+
 ```
 
 The first step is to convert the data.frame into a contingency table.
 
 ```{r contingency_matrix}
 sp_mat <- contingency(sp_df, "sp", "site", "pa", binary = TRUE)
+
+knitr::kable(sp_mat[1:5, 1:5])
 ```
 
 We then need to project the network.
@@ -67,7 +82,10 @@ sp_proj <- sp_proj[, c("id1", "id2", "simpson")]
 # write.table(sp_proj[, c("id1", "id2", "simpson")], "OSLOM2/vignette.txt",
 #             row.names = FALSE)
 
+knitr::kable(head(sp_proj))
 ```
+
+![Steps of the biogeographical network analysis.1.Biogeographical bipartite network where grid cells and species are linked by the presence of a species (or a group of species) in a given grid cell during a certain time window. Note that there is no link between nodes belonging to the same set. 2.The bipartite network is then spatially projected by using a similarity measure of species composition between grid cells.Bioregions are then identified with a network community detection algorithm.3.The test value matrix based on the contribution of species to bioregions is computed. 4. Then, a network of similarity between species is built, based on the test value matrix. Groups of species sharing similar spatial features are identified using a community detection algorithm. 5.Finally, a coarse‐grained biogeographical network unveiling the biogeographical structure of the studied area and the relationship between bioregions is obtained.](../figures/Lenormand_et_al_2019_Figure2.png)
 
 Running OSLOM (under Linux distribution).
 
@@ -77,15 +95,14 @@ Here:
 Converting the OSLOM .tp file into a list.
 
 ```{r conversion_OSLOM}
-res <- readLines("OSLOM2/vignette.txt_oslo_files/tp")
+res <- readLines("../OSLOM2/vignette.txt_oslo_files/tp")
 oslom_vignette <- oslom_output(res, sp_mat)
-length(unique(oslom_vignette$bioregion))
+
+print(paste0("Number of bioregions detected = ",
+             length(unique(oslom_vignette$bioregion))))
 ```
 
-Function to compute zscores.
-Step 3 of Figure 2 in Lenormand et al. (2019)
-
-![Steps of the biogeographical network analysis. 1. Biogeographical bipartite network where grid cells and species are linked by the presence of a species (or a group of species) in a given grid cell during a certain time window. Note that there is no link between nodes belonging to the same set. 2. The bipartite network is then spatially projected by using a similarity measure of species composition between grid cells. Bioregions are then identified with a network community detection algorithm. 3. The test value matrix based on the contribution of species to bioregions is computed. 4. Then, a network of similarity between species is built, based on the test value matrix. Groups of species sharing similar spatial features are identified using a community detection algorithm. 5. Finally, a coarse‐grained biogeographical network unveiling the biogeographical structure of the studied area and the relationship between bioregions is obtained.](../figures/Lenormand_et_al_2019_Figure2.png)
+Step 3 of Figure 1 (see Lenormand et al. (2019))
 
 ![Principle of the zscore calculation.](../figures/zscore_scheme.png)
 
@@ -99,27 +116,26 @@ $$
 tmp <- left_join(sp_df, oslom_vignette, by = "site")
 z_scores <- zscore(tmp, sp_col = "sp", site_col = "site",
                    bioregion_col = "bioregion")
-knitr::kable()
 
-top10 <- zscore_sp %>%
-  group_by(bioregion_type, bioregion_value) %>%
-  mutate(zscore = 100*(zscore-min(zscore))/ # convert zscore into percentages
-           (max(zscore) - min(zscore))) %>%
-  filter(n_i > quantile(n_i, 0.25)) %>% # remove 25% rarest species
-  top_n(10, zscore) %>% # extract top 10
-  mutate(rank = rank(-zscore, # ranking zcore in an ascending order
-                     ties.method = "first")) %>% # if tie zscore, first species
-  select(sp, bioregion_type, bioregion_value, zscore, rank) %>%
-  mutate(zscore = round(zscore, 1)) %>% # rounding zscore to 1 digit
-  as.data.frame()
-
-top10_sp <- top10 %>%
-  select(-zscore) %>% # remove zscore column
-  group_by(bioregion_type, bioregion_value) %>%
-  gather(key = sp_name, value = sp, -bioregion_type, -bioregion_value, -rank) %>%
-  unite(sp_rank, sp_name, rank) %>%
-  spread(sp_rank, sp) %>%
-  as.data.frame()
+# top10 <- zscore_sp %>%
+#   group_by(bioregion_type, bioregion_value) %>%
+#   mutate(zscore = 100*(zscore-min(zscore))/ # convert zscore into percentages
+#            (max(zscore) - min(zscore))) %>%
+#   filter(n_i > quantile(n_i, 0.25)) %>% # remove 25% rarest species
+#   top_n(10, zscore) %>% # extract top 10
+#   mutate(rank = rank(-zscore, # ranking zcore in an ascending order
+#                      ties.method = "first")) %>% # if tie zscore, first species
+#   select(sp, bioregion_type, bioregion_value, zscore, rank) %>%
+#   mutate(zscore = round(zscore, 1)) %>% # rounding zscore to 1 digit
+#   as.data.frame()
+# 
+# top10_sp <- top10 %>%
+#   select(-zscore) %>% # remove zscore column
+#   group_by(bioregion_type, bioregion_value) %>%
+#   gather(key = sp_name, value = sp, -bioregion_type, -bioregion_value, -rank) %>%
+#   unite(sp_rank, sp_name, rank) %>%
+#   spread(sp_rank, sp) %>%
+#   as.data.frame()
 
 ```
 
@@ -129,6 +145,8 @@ Interaction plots.
 ex_lambda <- lambda(dat = z_scores, sp_col = "sp", zscore_col = "zscore",
                     bioregion_col = "bioregion",
                     criterion = "top10", plot = TRUE)
+
+ex_lambda
 ```
 
 

@@ -84,12 +84,16 @@ lambda <- function(dat, sp_col, zscore_col, bioregion_col,
     lambda <- rbind(lambda,
                     tmp[, c("focal_bioregion", "bioregion", "sum_rho")])
   }
-  return(lambda)
 
   if(plot == TRUE){
-    return(ggplot(lambda, aes(focal_bioregion, sum_rho)) +
-             geom_bar(aes(fill = as.factor(bioregion)), stat = "identity") +
-             labs(title = "Interaction between bioregions",
-                  x = "Bioregion", y = "Sum of contributions (%)"))
+    res_plot <- ggplot(lambda, aes(focal_bioregion, sum_rho)) +
+      geom_bar(aes(fill = as.factor(bioregion)), stat = "identity") +
+      scale_fill_viridis_d("Bioregions") +
+      labs(title = "Interaction between bioregions",
+           x = "Bioregion", y = "Sum of contributions (%)") +
+      theme_classic()
+    return(list(lambda, res_plot))
+  } else{
+    return(lambda)
   }
 }
