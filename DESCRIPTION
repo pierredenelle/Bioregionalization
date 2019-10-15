@@ -2,10 +2,7 @@ Package: Bioregionalization
 Type: Package
 Title: Bioregionalization
 Version: 0.1.0
-Authors@R: c(
-  person("Pierre", "Denelle", email = "pierre.denelle@cefe.cnrs.fr",
-         role = "aut", comment = c(ORCID = "0000-0001-5037-2281"))
-)
+Author: pierredenelle
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
