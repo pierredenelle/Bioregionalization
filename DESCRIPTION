@@ -3,6 +3,10 @@ Type: Package
 Title: Bioregionalization
 Version: 0.1.0
 Author: pierredenelle
+Authors@R: c(
+    person("Pierre", "Denelle", email = "pierre.denelle@cefe.cnrs.fr",
+         role = "aut", comment = c(ORCID = "0000-0001-5037-2281"))
+)
 Maintainer: Pierre Denelle <pierre.denelle@ gmail.com>
 Description: Aim at testing several methods to delineate bioregions.
     Use methods based on projected or bipartite networks.
