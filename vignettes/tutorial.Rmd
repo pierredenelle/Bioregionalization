@@ -70,6 +70,10 @@ sp_df %>%
 
 ```
 
+![Example of response curve for one virtual species.](../figures/sp1_response_curve.png)
+
+![Example of suitability map for one virtual species.](../figures/sp1_suitability.png)
+
 The first step is to convert the data.frame into a contingency table.
 
 ```{r contingency_matrix}

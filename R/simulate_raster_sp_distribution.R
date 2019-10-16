@@ -39,11 +39,20 @@ env_dat$site <- paste0("site", 1:nrow(env_dat))
 # Generating 100 species with mean all along Bio1 gradient
 env_value <- env_dat$sim1
 mean_gdt <- sort(rep(seq(min(env_value), max(env_value), length.out = 10), 10))
-sd_gdt <- rep(seq(var(env_value), sd(env_value), length.out = 10), 10)
+sd_gdt <- rep(seq(var(env_value), 5*var(env_value), length.out = 10), 10)
 
 # Generating 100 species with 500 occurrences
 sampled_points <- rep(500, length(env_dat$sim1))
 env_raster <- stack(yy[1])
+
+# Plotting four response curves
+par(mfrow = c(2, 1))
+param_i <- formatFunctions(
+  sim1 = c(fun = "dnorm", mean = mean_gdt[1], sd = sd_gdt[100]))
+# Generation of the virtual species
+sp_i <- generateSpFromFun(raster.stack = env_raster,
+                          parameters = param_i, plot = TRUE)
+plotResponse(sp_i)
 
 sp_df <- c()
 for (i in 1:100){
