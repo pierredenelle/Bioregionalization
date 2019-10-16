@@ -2,10 +2,8 @@ Package: Bioregionalization
 Type: Package
 Title: Bioregionalization
 Version: 0.1.0
-Authors@R: c(
-  person("Pierre", "Denelle", email = "pierre.denelle@gmail.com",
-         role = "aut", comment = c(ORCID = "0000-0001-5037-2281"))
-)
+Authors@R: person("Pierre", "Denelle", email = "pierre.denelle@gmail.com",
+    role = c("aut" , "cre"), comment = c(ORCID = "0000-0001-5037-2281"))
 Maintainer: Pierre Denelle <pierre.denelle@ gmail.com>
 Description: Aim at testing several methods to delineate bioregions.
     Use methods based on projected or bipartite networks.
@@ -14,7 +12,7 @@ Depends:
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
-Suggests: knitr,
+Imports: knitr,
     rmarkdown,
     dplyr,
     ggplot2,
