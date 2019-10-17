@@ -1,0 +1,2 @@
+dataset.txt_oslo_files has to be created otherwise run_oslom is unable to store the files.
+ 
