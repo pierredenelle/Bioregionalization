@@ -103,7 +103,7 @@ sp_proj <- read.table("OSLOM2/vignette.txt", header = TRUE)
 
 # Try of run_oslom
 po <- run_oslom(sp_proj, n_runs = 10, t_param = 0.1, cp_param = 0.5,
-                saving_directory = "D:/PIERRE_DENELLE/CarHab/Bioregionalization/")
+                saving_directory = "D:/PIERRE_DENELLE/CarHab/test_bioregionalization/")
 ```
 
 
