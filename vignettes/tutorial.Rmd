@@ -5,10 +5,10 @@ date: "`r Sys.Date()`"
 output: 
   - pdf_document
 vignette: >
-  %\VignetteIndexEntry{Tutorial for Bioregionalization R package}
+%\VignetteIndexEntry{Tutorial for Bioregionalization R package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8} 
-editor_options: 
+  editor_options: 
   chunk_output_type: console
 ---
 
@@ -97,6 +97,15 @@ knitr::kable(head(sp_proj))
 ![Steps of the biogeographical network analysis.1.Biogeographical bipartite network where grid cells and species are linked by the presence of a species (or a group of species) in a given grid cell during a certain time window. Note that there is no link between nodes belonging to the same set. 2.The bipartite network is then spatially projected by using a similarity measure of species composition between grid cells.Bioregions are then identified with a network community detection algorithm.3.The test value matrix based on the contribution of species to bioregions is computed. 4. Then, a network of similarity between species is built, based on the test value matrix. Groups of species sharing similar spatial features are identified using a community detection algorithm. 5.Finally, a coarse‐grained biogeographical network unveiling the biogeographical structure of the studied area and the relationship between bioregions is obtained.](../figures/Lenormand_et_al_2019_Figure2.png)
 
 Running OSLOM (under Linux distribution).
+
+```{r run_OSLOM}
+sp_proj <- read.table("OSLOM2/vignette.txt", header = TRUE)
+
+# Try of run_oslom
+po <- run_oslom(sp_proj, n_runs = 10, t_param = 0.1, cp_param = 0.5,
+                saving_directory = "D:/PIERRE_DENELLE/CarHab/Bioregionalization/")
+```
+
 
 Here:
 ./oslom_undir -r 10 -seed 1000 -t 0.5 -cp 0.5 -f vignette.txt -w
