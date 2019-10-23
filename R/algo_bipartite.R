@@ -30,7 +30,7 @@ algo_bipartite <- function(dat, algo = "greedy", weight = FALSE){
                                          as.character(network_mod[[2]])),
                               modularity = as.character(network_mod[[3]]))
     # Add category of the node
-    network_lab$cat <- ifelse(rownames(network_lab) %in% rownames(dat),
+    network_lab$cat <- ifelse(network_lab$node %in% rownames(dat),
                               "site", "sp")
 
   } else if(algo %in% c("greedy", "girvan", "walktrap", "louvain")){

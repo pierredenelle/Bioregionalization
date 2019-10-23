@@ -89,26 +89,17 @@ We then need to project the network.
 sp_proj <- project_network(sp_mat, similarity = "simpson")
 sp_proj <- sp_proj[, c("id1", "id2", "simpson")]
 
-# write.table(sp_proj[, c("id1", "id2", "simpson")], "OSLOM2/vignette.txt",
-#             row.names = FALSE)
-
 knitr::kable(head(sp_proj))
 ```
 
 ![Steps of the biogeographical network analysis.1.Biogeographical bipartite network where grid cells and species are linked by the presence of a species (or a group of species) in a given grid cell during a certain time window. Note that there is no link between nodes belonging to the same set. 2.The bipartite network is then spatially projected by using a similarity measure of species composition between grid cells.Bioregions are then identified with a network community detection algorithm.3.The test value matrix based on the contribution of species to bioregions is computed. 4. Then, a network of similarity between species is built, based on the test value matrix. Groups of species sharing similar spatial features are identified using a community detection algorithm. 5.Finally, a coarse‐grained biogeographical network unveiling the biogeographical structure of the studied area and the relationship between bioregions is obtained.](../figures/Lenormand_et_al_2019_Figure2.png)
 
-Running OSLOM (under Linux distribution).
+Running OSLOM.
 
 ```{r run_OSLOM}
-sp_proj <- read.table("OSLOM2/vignette.txt", header = TRUE)
-
-# Try of run_oslom
 run_oslom(sp_proj, n_runs = 10, t_param = 0.1, cp_param = 0.5,
           saving_directory = "D:/PIERRE_DENELLE/CarHab/test_bioregionalization/")
 ```
-
-Here:
-./oslom_undir -r 10 -seed 1000 -t 0.5 -cp 0.5 -f vignette.txt -w
 
 Converting the OSLOM .tp file into a list.
 
@@ -175,15 +166,37 @@ bip <- algo_bipartite(dat = sp_mat, algo = "greedy", weight = FALSE)
 # With Beckett algorithm
 bip2 <- algo_bipartite(dat = sp_mat, algo = "LPAwb", weight = FALSE)
 
+# Only sites
+bip_site <- bip %>%
+  filter(cat == "site") %>%
+  rename(site = node) %>%
+  dplyr::select(site, module)
+
+bip_site2 <- bip2 %>%
+  filter(cat == "site") %>%
+  rename(site = node) %>%
+  dplyr::select(site, module)
 ```
 
 Cz computation on bipartite results.
 
 ```{r cz}
+bip_cz <- bip[, c("node", "module", "cat")]
+colnames(bip_cz) <- c("node", "mod", "cat")
 
+link_cz <- sp_df[, c("site", "sp")] %>%
+  left_join(bip_cz[which(bip_cz$cat == "site"), c("node", "mod")],
+            by = c("site" = "node")) %>%
+  rename(mod_site = mod) %>%
+    left_join(bip_cz[which(bip_cz$cat == "sp"), c("node", "mod")],
+            by = c("sp" = "node")) %>%
+  rename(mod_sp = mod)
+
+cz_bip <- cz(link_dat = link_cz, dat = bip_cz, ab = NULL)
+
+head(cz_bip[[1]])
 
 ```
-
 
 Projection on a map.
 
@@ -226,8 +239,29 @@ plot_grid(
     coord_equal() +
     labs(title = "CA bioregions") +
     theme(panel.background = element_rect(fill = "transparent",colour = NA)),
-  
-  nrow = 1)
+  sp_df %>%
+  left_join(bip_site, by = "site") %>%
+  distinct(site, .keep_all = TRUE) %>%
+  ggplot(aes(x, y)) +
+  geom_tile(aes(fill = as.factor(module), color = as.factor(module)),
+            alpha = 0.8, width = 1, height = 1) +
+  scale_color_viridis_d("Bioregions", option = "E") +
+  scale_fill_viridis_d("Bioregions", option = "E") +
+  coord_equal() +
+  labs(title = "Bipartite greedy bioregions") +
+  theme(panel.background = element_rect(fill = "transparent",colour = NA)),
+  sp_df %>%
+  left_join(bip_site2, by = "site") %>%
+  distinct(site, .keep_all = TRUE) %>%
+  ggplot(aes(x, y)) +
+  geom_tile(aes(fill = as.factor(module), color = as.factor(module)),
+            alpha = 0.8, width = 1, height = 1) +
+  scale_color_viridis_d("Bioregions", option = "E") +
+  scale_fill_viridis_d("Bioregions", option = "E") +
+  coord_equal() +
+  labs(title = "LPAwb+ greedy bioregions") +
+  theme(panel.background = element_rect(fill = "transparent",colour = NA)),
+  nrow = 2)
 
 # With sf
 # res_map <- sp_df %>%
