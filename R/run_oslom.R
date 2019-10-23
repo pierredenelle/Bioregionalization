@@ -92,7 +92,10 @@ run_oslom <- function(dat, n_runs = 10, t_param = 0.1, cp_param = 0.5,
 
   # Saving .tp file into chosen saving_directory
   # version = 2: files readable for R versions from 1.4.0 to 3.5.0
-  save(tp_res, file = paste0(saving_directory, "/tp"), version = 2)
+  # save(tp_res, file = paste0(saving_directory, "/tp"), version = 2)
+  # write.table(tp_res, file = paste0(saving_directory, "/tp"),
+  #             row.names = FALSE, col.names = FALSE)
+  saveRDS(tp_res, file = paste0(saving_directory, "/tp.rds"), version = 2)
 
   # Remove .oslo_files created and the dataset
   # file.remove("OSLOM/dataset.txt")
