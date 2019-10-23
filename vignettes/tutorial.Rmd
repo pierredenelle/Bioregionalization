@@ -29,6 +29,7 @@ suppressPackageStartupMessages({
     library(sf)
     library(ggplot2)
     library(cowplot)
+    library(igraph)
   })
 })
 
@@ -102,10 +103,9 @@ Running OSLOM (under Linux distribution).
 sp_proj <- read.table("OSLOM2/vignette.txt", header = TRUE)
 
 # Try of run_oslom
-po <- run_oslom(sp_proj, n_runs = 10, t_param = 0.1, cp_param = 0.5,
-                saving_directory = "D:/PIERRE_DENELLE/CarHab/test_bioregionalization/")
+run_oslom(sp_proj, n_runs = 10, t_param = 0.1, cp_param = 0.5,
+          saving_directory = "D:/PIERRE_DENELLE/CarHab/test_bioregionalization/")
 ```
-
 
 Here:
 ./oslom_undir -r 10 -seed 1000 -t 0.5 -cp 0.5 -f vignette.txt -w
@@ -113,7 +113,8 @@ Here:
 Converting the OSLOM .tp file into a list.
 
 ```{r conversion_OSLOM}
-res <- readLines("../OSLOM2/vignette.txt_oslo_files/tp")
+#res <- readLines("../OSLOM2/vignette.txt_oslo_files/tp")
+res <- readRDS("../../test_bioregionalization/tp.rds")
 oslom_vignette <- oslom_output(res, sp_mat)
 
 print(paste0("Number of bioregions detected = ",
@@ -164,6 +165,25 @@ Example with Ward analysis and k-means clustering.
 # CA_res <- CA_cluster(sp_mat)
 ward_res <- ward_cluster(sp_mat)
 ```
+
+Bipartite algorithms applied on example dataset.
+
+```{r bipartite}
+# With fastgreedy
+bip <- algo_bipartite(dat = sp_mat, algo = "greedy", weight = FALSE)
+
+# With Beckett algorithm
+bip2 <- algo_bipartite(dat = sp_mat, algo = "LPAwb", weight = FALSE)
+
+```
+
+Cz computation on bipartite results.
+
+```{r cz}
+
+
+```
+
 
 Projection on a map.
 
