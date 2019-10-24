@@ -30,6 +30,7 @@ suppressPackageStartupMessages({
     library(ggplot2)
     library(cowplot)
     library(igraph)
+    library(RColorBrewer)
   })
 })
 
@@ -57,25 +58,33 @@ Species with suitability index inferior to 0.15 were arbitrarily set absent.
 # Import Mediterranean dataset
 data("medit")
 # Import virtual dataset
-data("virtual_sp")
+# data("virtual_sp")
 
 # Plot of environmental values
-sp_df %>%
-  distinct(site, .keep_all = TRUE) %>%
-  ggplot(aes(x, y)) +
-  geom_tile(aes(fill = env, color = env),
-            alpha = 0.8, width = 1, height = 1) +
-  scale_color_distiller("Value", palette = "OrRd") +
-  scale_fill_distiller("Value", palette = "OrRd") +
-  coord_equal() +
-  labs(title = "Environmental variable") +
-  theme(panel.background = element_rect(fill = "transparent",colour = NA))
+# sp_df %>%
+#   distinct(site, .keep_all = TRUE) %>%
+#   ggplot(aes(x, y)) +
+#   geom_tile(aes(fill = env, color = env),
+#             alpha = 0.8, width = 1, height = 1) +
+#   scale_color_distiller("Value", palette = "OrRd") +
+#   scale_fill_distiller("Value", palette = "OrRd") +
+#   coord_equal() +
+#   labs(title = "Environmental variable") +
+theme(panel.background = element_rect(fill = "transparent",colour = NA))
 
 # Plot of Mediterranean area
 medit[[2]] %>%
   ggplot() +
-  geom_sf()
+  geom_sf() +
+  labs(title = expression("Mediterranean area, resolution 40x40km"^2),
+       x = "Longitude", y = "Latitude")
 
+sp_df <- medit[[1]] %>%
+  rename(site = id) %>%
+  mutate(sp = as.character(sp))
+
+medit[[2]]$site <- as.character(medit[[2]]$site)
+colnames(medit[[2]]) <- c("site", "geometry")
 ```
 
 ![Example of response curve for one virtual species.](../figures/sp1_response_curve.png)
@@ -86,15 +95,15 @@ The first step is to convert the data.frame into a contingency table.
 
 ```{r contingency_matrix}
 #sp_mat <- contingency(sp_df, "site", "sp", "pa", binary = TRUE)
-sp_mat <- contingency(medit[[1]], "id", "sp", ab = NULL, binary = TRUE)
+sp_mat <- contingency(sp_df, "site", "sp", ab = NULL, binary = TRUE)
 knitr::kable(sp_mat[1:5, 1:5])
 ```
 
 We then need to project the network.
 
 ```{r projection}
-sp_proj <- project_network(sp_mat, similarity = "jaccard")
-sp_proj <- sp_proj[, c("id1", "id2", "jaccard")]
+sp_proj <- project_network(sp_mat, similarity = "simpson")
+sp_proj <- sp_proj[, c("id1", "id2", "simpson")]
 
 knitr::kable(head(sp_proj))
 ```
@@ -131,9 +140,8 @@ $$
 ```{r z_scores}
 
 # tmp <- left_join(sp_df, oslom_vignette, by = "site")
-medit[[1]]$id <- as.character(medit[[1]]$id)
-tmp <- left_join(medit[[1]], oslom_vignette, by = c("id" = "site"))
-z_scores <- zscore(tmp, sp_col = "sp", site_col = "id",
+tmp <- left_join(sp_df, oslom_vignette, by = "site")
+z_scores <- zscore(tmp, sp_col = "sp", site_col = "site",
                    bioregion_col = "bioregion")
 
 top10 <- z_scores %>%
@@ -197,7 +205,7 @@ link_cz <- sp_df[, c("site", "sp")] %>%
   left_join(bip_cz[which(bip_cz$cat == "site"), c("node", "mod")],
             by = c("site" = "node")) %>%
   rename(mod_site = mod) %>%
-    left_join(bip_cz[which(bip_cz$cat == "sp"), c("node", "mod")],
+  left_join(bip_cz[which(bip_cz$cat == "sp"), c("node", "mod")],
             by = c("sp" = "node")) %>%
   rename(mod_sp = mod)
 
@@ -210,6 +218,76 @@ head(cz_bip[[1]])
 Projection on a map.
 
 ```{r map}
+color_vector <- c(brewer.pal(12, "Paired"), brewer.pal(12, "Set3"))
+getPalette <- colorRampPalette(brewer.pal(9, "Set1"))
+
+plot_grid(
+  # Plot of Mediterreanean region
+  medit[[2]] %>%
+    ggplot() +
+    geom_sf() +
+    labs(title = expression("Mediterranean area, resolution 20x20km"^2),
+         x = "Longitude", y = "Latitude"),
+  # Plot of OSLOM bioregions
+  sp_df %>%
+    left_join(oslom_vignette, by = "site") %>%
+    distinct(site, .keep_all = TRUE) %>%
+    left_join(medit[[2]], by = "site") %>%
+    st_as_sf() %>%
+    group_by(bioregion) %>%
+    summarise() %>%
+    ggplot() +
+    geom_sf(aes(fill = as.factor(bioregion)), color = "black",  alpha = 0.8) +
+    scale_fill_manual("Bioregions",
+                      values = getPalette(length(unique(oslom_vignette$bioregion)))) +
+    labs(title = "OSLOM bioregions", x = "Longitude", y = "Latitude"),
+  
+  # Plot of Ward bioregions
+  sp_df %>%
+    left_join(ward_res, by = "site") %>%
+    distinct(site, .keep_all = TRUE) %>%
+    left_join(medit[[2]], by = "site") %>%
+    st_as_sf() %>%
+    group_by(cluster) %>%
+    summarise() %>%
+    ggplot() +
+    geom_sf(aes(fill = as.factor(cluster)), color = "black", alpha = 0.8) +
+    scale_fill_manual("Bioregions",
+                      values = getPalette(length(unique(ward_res$cluster)))) +
+    labs(title = "Ward bioregions", x = "Longitude", y = "Latitude"),
+  
+  # Plot of fastgreedy bioregions
+  sp_df %>%
+    left_join(bip_site, by = "site") %>%
+    distinct(site, .keep_all = TRUE) %>%
+    left_join(medit[[2]], by = "site") %>%
+    st_as_sf() %>%
+    group_by(module) %>%
+    summarise() %>%
+    ggplot() +
+    geom_sf(aes(fill = as.factor(module)), color = "black", alpha = 0.8) +
+    scale_fill_manual("Bioregions",
+                      values = getPalette(length(unique(bip_site$module)))) +
+    labs(title = "Fastgreedy bioregions", x = "Longitude", y = "Latitude"),
+  
+  # Plot of LPAwb bioregions
+  sp_df %>%
+    left_join(bip_site2, by = "site") %>%
+    distinct(site, .keep_all = TRUE) %>%
+    left_join(medit[[2]], by = "site") %>%
+    st_as_sf() %>%
+    group_by(module) %>%
+    summarise() %>%
+    ggplot() +
+    geom_sf(aes(fill = as.factor(module)), color = "black", alpha = 0.8) +
+    scale_fill_manual("Bioregions",
+                      values = getPalette(length(unique(bip_site2$module)))) +
+    labs(title = "LPAwb bioregions", x = "Longitude", y = "Latitude"),
+  nrow = 2)
+
+```
+
+```{r map_virtual_dataset, eval = FALSE, echo = FALSE}
 plot_grid(
   # Plot of environmental values
   sp_df %>%
@@ -234,7 +312,8 @@ plot_grid(
     scale_fill_viridis_d("Bioregions", option = "E") +
     coord_equal() +
     labs(title = "OSLOM bioregions") +
-    theme(panel.background = element_rect(fill = "transparent",colour = NA)),
+    theme(panel.background = element_rect(fill = "transparent",
+                                          colour = "black")),
   
   # Plot of Ward bioregions
   sp_df %>%
@@ -246,44 +325,35 @@ plot_grid(
     scale_color_viridis_d("Bioregions", option = "E") +
     scale_fill_viridis_d("Bioregions", option = "E") +
     coord_equal() +
-    labs(title = "CA bioregions") +
+    labs(title = "Ward bioregions"), +
     theme(panel.background = element_rect(fill = "transparent",colour = NA)),
+  
+  # Plot of fastgreedy bioregions
   sp_df %>%
-  left_join(bip_site, by = "site") %>%
-  distinct(site, .keep_all = TRUE) %>%
-  ggplot(aes(x, y)) +
-  geom_tile(aes(fill = as.factor(module), color = as.factor(module)),
-            alpha = 0.8, width = 1, height = 1) +
-  scale_color_viridis_d("Bioregions", option = "E") +
-  scale_fill_viridis_d("Bioregions", option = "E") +
-  coord_equal() +
-  labs(title = "Bipartite greedy bioregions") +
-  theme(panel.background = element_rect(fill = "transparent",colour = NA)),
+    left_join(bip_site, by = "site") %>%
+    distinct(site, .keep_all = TRUE) %>%
+    ggplot(aes(x, y)) +
+    geom_tile(aes(fill = as.factor(module), color = as.factor(module)),
+              alpha = 0.8, width = 1, height = 1) +
+    scale_color_viridis_d("Bioregions", option = "E") +
+    scale_fill_viridis_d("Bioregions", option = "E") +
+    coord_equal() +
+    labs(title = "Bipartite greedy bioregions") +
+    theme(panel.background = element_rect(fill = "transparent",colour = NA)),
+  
+  # Plot of LPAwb bioregions
   sp_df %>%
-  left_join(bip_site2, by = "site") %>%
-  distinct(site, .keep_all = TRUE) %>%
-  ggplot(aes(x, y)) +
-  geom_tile(aes(fill = as.factor(module), color = as.factor(module)),
-            alpha = 0.8, width = 1, height = 1) +
-  scale_color_viridis_d("Bioregions", option = "E") +
-  scale_fill_viridis_d("Bioregions", option = "E") +
-  coord_equal() +
-  labs(title = "LPAwb+ greedy bioregions") +
-  theme(panel.background = element_rect(fill = "transparent",colour = NA)),
+    left_join(bip_site2, by = "site") %>%
+    distinct(site, .keep_all = TRUE) %>%
+    ggplot(aes(x, y)) +
+    geom_tile(aes(fill = as.factor(module), color = as.factor(module)),
+              alpha = 0.8, width = 1, height = 1) +
+    scale_color_viridis_d("Bioregions", option = "E") +
+    scale_fill_viridis_d("Bioregions", option = "E") +
+    coord_equal() +
+    labs(title = "LPAwb+ greedy bioregions") +
+    theme(panel.background = element_rect(fill = "transparent",colour = NA)),
   nrow = 2)
-
-# With sf
-# res_map <- sp_df %>%
-#   left_join(oslom_vignette, by = "site") %>%
-#   st_as_sf(coords = c("x", "y")) %>%
-#   group_by(bioregion) %>% 
-#   summarise()
-# 
-# ggplot(res_map) +
-#   geom_sf(aes(fill = as.factor(bioregion), color = as.factor(bioregion))) +
-#   scale_fill_viridis_d("Bioregions") +
-#   scale_color_viridis_d("Bioregions") +
-#   labs(x = "Longitude", y = "Latitude")
 
 ```
 
