@@ -93,8 +93,8 @@ knitr::kable(sp_mat[1:5, 1:5])
 We then need to project the network.
 
 ```{r projection}
-sp_proj <- project_network(sp_mat, similarity = "simpson")
-sp_proj <- sp_proj[, c("id1", "id2", "simpson")]
+sp_proj <- project_network(sp_mat, similarity = "jaccard")
+sp_proj <- sp_proj[, c("id1", "id2", "jaccard")]
 
 knitr::kable(head(sp_proj))
 ```
@@ -104,7 +104,7 @@ knitr::kable(head(sp_proj))
 Running OSLOM.
 
 ```{r run_OSLOM}
-run_oslom(sp_proj, n_runs = 10, t_param = 0.1, cp_param = 0.5,
+run_oslom(sp_proj, n_runs = 5, t_param = 0.1, cp_param = 0.5,
           saving_directory = "D:/PIERRE_DENELLE/CarHab/Bioregionalization_extra/")
 ```
 
@@ -130,8 +130,10 @@ $$
 
 ```{r z_scores}
 
-tmp <- left_join(sp_df, oslom_vignette, by = "site")
-z_scores <- zscore(tmp, sp_col = "sp", site_col = "site",
+# tmp <- left_join(sp_df, oslom_vignette, by = "site")
+medit[[1]]$id <- as.character(medit[[1]]$id)
+tmp <- left_join(medit[[1]], oslom_vignette, by = c("id" = "site"))
+z_scores <- zscore(tmp, sp_col = "sp", site_col = "id",
                    bioregion_col = "bioregion")
 
 top10 <- z_scores %>%
@@ -139,7 +141,7 @@ top10 <- z_scores %>%
   top_n(n = 10, zscore) %>% # extract top 10
   mutate(rank = rank(-zscore, # ranking zcore in an ascending order
                      ties.method = "first")) %>% # if tie zscore, first species
-  select(sp, bioregion, zscore, rank) %>%
+  dplyr::select(sp, bioregion, zscore, rank) %>%
   mutate(zscore = round(zscore, 1)) %>% # rounding zscore to 1 digit
   as.data.frame()
 
