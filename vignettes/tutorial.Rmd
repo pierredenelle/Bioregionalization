@@ -54,6 +54,8 @@ For every species in every cell, we could derive a suitability index.
 Species with suitability index inferior to 0.15 were arbitrarily set absent.
 
 ```{r dataset}
+# Import Mediterranean dataset
+data("medit")
 # Import virtual dataset
 data("virtual_sp")
 
@@ -69,6 +71,11 @@ sp_df %>%
   labs(title = "Environmental variable") +
   theme(panel.background = element_rect(fill = "transparent",colour = NA))
 
+# Plot of Mediterranean area
+medit[[2]] %>%
+  ggplot() +
+  geom_sf()
+
 ```
 
 ![Example of response curve for one virtual species.](../figures/sp1_response_curve.png)
@@ -78,8 +85,8 @@ sp_df %>%
 The first step is to convert the data.frame into a contingency table.
 
 ```{r contingency_matrix}
-sp_mat <- contingency(sp_df, "sp", "site", "pa", binary = TRUE)
-
+#sp_mat <- contingency(sp_df, "site", "sp", "pa", binary = TRUE)
+sp_mat <- contingency(medit[[1]], "id", "sp", ab = NULL, binary = TRUE)
 knitr::kable(sp_mat[1:5, 1:5])
 ```
 
@@ -98,14 +105,14 @@ Running OSLOM.
 
 ```{r run_OSLOM}
 run_oslom(sp_proj, n_runs = 10, t_param = 0.1, cp_param = 0.5,
-          saving_directory = "D:/PIERRE_DENELLE/CarHab/test_bioregionalization/")
+          saving_directory = "D:/PIERRE_DENELLE/CarHab/Bioregionalization_extra/")
 ```
 
 Converting the OSLOM .tp file into a list.
 
 ```{r conversion_OSLOM}
 #res <- readLines("../OSLOM2/vignette.txt_oslo_files/tp")
-res <- readRDS("../../test_bioregionalization/tp.rds")
+res <- readRDS("../../Bioregionalization_extra/tp.rds")
 oslom_vignette <- oslom_output(res, sp_mat)
 
 print(paste0("Number of bioregions detected = ",
