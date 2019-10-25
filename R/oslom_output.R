@@ -13,6 +13,10 @@ oslom_output <- function(dat, contingency_mat, doublon_removal = "first"){
          'max'.")
   }
 
+  if(is.null(rownames(contingency_mat))){
+    stop("contingency_mat should have the sites set as rownames.")
+  }
+
   # Convert dat into list
   bioregion_list <- list()
   length(bioregion_list) <- length(dat)/2

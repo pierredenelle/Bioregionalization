@@ -22,11 +22,25 @@ project_network <- function(contingency_mat, similarity = "simpson"){
     require(ecodist)
     require(reshape2)
     bray <- bcdist(contingency_mat, rmzero = FALSE)
+    # Conversion as matrix and removal of upper part and diagonal
+    bray <- as.matrix(bray)
+    bray[upper.tri(bray)] <- NA
+    diag(bray) <- NA
+
     # Convert distance matrix into data.frame
-    abc <- melt(as.matrix(bray), varnames = c("site1", "site2"))
-    # Remove diagonal
-    abc <- abc[which(abc$site1 != abc$site2), ]
-    colnames(abc) <- c("site1", "site2", "bray")
+    abc <- melt(bray, varnames = c("id1", "id2"))
+    # Remove NAs
+    abc <- abc[complete.cases(abc), ]
+    colnames(abc) <- c("id1", "id2", "bray")
+    # Create columns of site names and put id in the id columns
+    if(!is.null(rownames(contingency_mat))){
+      abc$id1_name <- abc$id1
+      abc$id2_name <- abc$id2
+      abc$id1 <- match(abc$id1, rownames(contingency_mat))
+      abc$id2 <- match(abc$id2, rownames(contingency_mat))
+    }
+    # Similarity instead of dissimilarity
+    abc$bray <- 1 - abc$bray
 
   } else{
 
@@ -69,8 +83,8 @@ project_network <- function(contingency_mat, similarity = "simpson"){
   }
   # If contingency matrix has rownames, ressign them to abc data.frame
   if(!is.null(rownames(contingency_mat))){
-    abc$id1_name <- rownames(sp_mat)[abc$id1]
-    abc$id2_name <- rownames(sp_mat)[abc$id2]
+    abc$id1_name <- rownames(contingency_mat)[abc$id1]
+    abc$id2_name <- rownames(contingency_mat)[abc$id2]
   }
 
   return(abc)
