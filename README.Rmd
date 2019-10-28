@@ -3,6 +3,8 @@ title: "README"
 output: github_document
 ---
 
+[![Travis build status](https://travis-ci.org/pierredenelle/Bioregionalization.svg?branch=master)](https://travis-ci.org/pierredenelle/Bioregionalization)
+
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
