@@ -71,7 +71,10 @@ run_oslom <- function(dat, n_runs = 10, t_param = 0.1, cp_param = 0.5,
   # Import tp file created
   tp_res <- readLines(paste0(Bio_dir, "/OSLOM/dataset.txt_oslo_files/tp"))
 
-  # Saving .tp file into chosen saving_directory
+  # Reset previous working directory
+  setwd(current_path)
+
+  # Saving .tp file with bioregions into chosen saving_directory
   # version = 2: files readable for R versions from 1.4.0 to 3.5.0
   saveRDS(tp_res, file = paste0(saving_directory, "/tp.rds"), version = 2)
 
@@ -95,7 +98,4 @@ run_oslom <- function(dat, n_runs = 10, t_param = 0.1, cp_param = 0.5,
   file.remove(paste0(Bio_dir, "/OSLOM/dataset.txt_oslo_files/",
                      dir(paste0(Bio_dir, "/OSLOM/dataset.txt_oslo_files/"),
                          pattern = "tp")))
-
-  # Reset previous working directory
-  setwd(current_path)
 }
