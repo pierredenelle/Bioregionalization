@@ -25,6 +25,9 @@ vignette("tutorial", package = "Bioregionalization")
 
     ## Warning: vignette 'tutorial' not found
 
+The .pdf of the vignette can also be accessed
+**[here](https://github.com/pierredenelle/Bioregionalization/Documentation/tutorial.pdf)**.
+
 ## 3 Dependencies
 
 `Bioregionalization` depends on `dplyr`, `ecodist`, `reshape2`,
