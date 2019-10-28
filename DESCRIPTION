@@ -11,18 +11,19 @@ Depends:
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
+Imports:
+    Rcpp,
+    SMUT,
+    ecodist,
+    DescTools
+    dplyr
 Suggests: knitr,
     rmarkdown,
-    dplyr,
     ggplot2,
     cowplot,
     sf,
-    Rcpp,
-    SMUT,
     reshape2,
-    DescTools,
     ade4,
-    ecodist,
     cluster
 VignetteBuilder: knitr
 

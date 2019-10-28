@@ -359,3 +359,5 @@ plot_grid(
 
 ```
 
+All these functions can be called with the wrap-up `all_maps()` function.
+

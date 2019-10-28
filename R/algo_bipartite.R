@@ -7,9 +7,9 @@ algo_bipartite <- function(dat, algo = "greedy", weight = FALSE){
   }
 
   if(!(algo %in% c("greedy", "girvan", "walktrap", "louvain", "LPAwb"))){
-    stop("Similarity metric chosen is not available.
+    stop("Provided algorithm to compute modularity is not available.
      Please chose among the followings:
-         greedy, girvan, walktrap, louvain, or LPAwb")
+         greedy, girvan, walktrap, louvain, or LPAwb.")
   }
 
   if(!is.logical(weight)){
