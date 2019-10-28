@@ -25,6 +25,8 @@ A tutorial vignette showing the main steps of the processing can be visualised w
 vignette("tutorial", package = "Bioregionalization")
 ```
 
+The .pdf of the vignette can also be accessed **[here](https://github.com/pierredenelle/Bioregionalization/Documentation/tutorial.pdf)**.
+
 ## 3 Dependencies
 `Bioregionalization` depends on `dplyr`, `ecodist`, `reshape2`, `DescTools`,
 `ade4`, `cluster`, `sf`, `ggplot2`, `Rcpp`, `SMUT` and `igraph`.

@@ -4,11 +4,7 @@ author: "Pierre Denelle"
 date: "`r Sys.Date()`"
 output: 
   - pdf_document
-vignette: >
-%\VignetteIndexEntry{Tutorial for Bioregionalization R package}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8} 
-  editor_options: 
+editor_options: 
   chunk_output_type: console
 ---
 
