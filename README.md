@@ -26,7 +26,7 @@ vignette("tutorial", package = "Bioregionalization")
     ## Warning: vignette 'tutorial' not found
 
 The .pdf of the vignette can also be accessed
-**[here](https://github.com/pierredenelle/Bioregionalization/Documentation/tutorial.pdf)**.
+**[here](https://github.com/pierredenelle/Bioregionalization/blob/master/documentation/tutorial_documentation.pdf)**.
 
 ## 3 Dependencies
 
