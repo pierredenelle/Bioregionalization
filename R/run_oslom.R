@@ -43,15 +43,12 @@ run_oslom <- function(dat, n_runs = 10, t_param = 0.1, cp_param = 0.5,
          the bioregions identified will be saved.")
   }
 
-  # Save input dataset as a .txt file into OSLOM folder
-  write.table(dat,
-              # paste0(saving_directory, "dataset.txt"),
-              paste0(.libPaths(), "/Bioregionalization/OSLOM/dataset.txt"),
-              row.names = FALSE)
-
   # Bioregionalization directory
   Bio_dir <- list.dirs(.libPaths(), recursive = FALSE)
   Bio_dir <- Bio_dir[grep("Bioregionalization", Bio_dir)]
+
+  # Save input dataset as a .txt file into OSLOM folder
+  write.table(dat, paste0(Bio_dir, "/OSLOM/dataset.txt"), row.names = FALSE)
 
   # Change working directory so the file is saved in the proper place
   current_path <- getwd()
