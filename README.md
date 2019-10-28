@@ -1,6 +1,9 @@
 README
 ================
 
+[![Travis build
+status](https://travis-ci.org/pierredenelle/Bioregionalization.svg?branch=master)](https://travis-ci.org/pierredenelle/Bioregionalization)
+
 `Bioregionalization` is a package designed to compare several methods of
 clustering based on multivariate or network
 approaches.
