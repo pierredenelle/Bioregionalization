@@ -49,15 +49,18 @@ run_oslom <- function(dat, n_runs = 10, t_param = 0.1, cp_param = 0.5,
               paste0(.libPaths(), "/Bioregionalization/OSLOM/dataset.txt"),
               row.names = FALSE)
 
+  # Bioregionalization directory
+  Bio_dir <- list.dirs(.libPaths(), recursive = FALSE)
+  Bio_dir <- Bio_dir[grep("Bioregionalization", Bio_dir)]
+
   # Change working directory so the file is saved in the proper place
   current_path <- getwd()
-  setwd(paste0(.libPaths(), "/Bioregionalization/"))
+  setwd(Bio_dir)
 
   # Set up the command with required parameters
   if(.Platform$OS.type == "windows"){
     cmd <-
-      paste0(.libPaths(),
-             "/Bioregionalization/OSLOM/oslom_undir_win.exe -f OSLOM/dataset.txt -w",
+      paste0(Bio_dir, "/OSLOM/oslom_undir_win.exe -f OSLOM/dataset.txt -w",
              " -r ", n_runs, " -t ", t_param, " -cp ", cp_param)
   } else if(.Platform$OS.type == "unix"){
     stop("To do")
@@ -69,49 +72,32 @@ run_oslom <- function(dat, n_runs = 10, t_param = 0.1, cp_param = 0.5,
   system(command = cmd)
 
   # Import tp file created
-  tp_res <- readLines(
-    paste0(.libPaths(),
-           "/Bioregionalization/OSLOM/dataset.txt_oslo_files/tp"))
+  tp_res <- readLines(paste0(Bio_dir, "/OSLOM/dataset.txt_oslo_files/tp"))
 
   # Saving .tp file into chosen saving_directory
   # version = 2: files readable for R versions from 1.4.0 to 3.5.0
   saveRDS(tp_res, file = paste0(saving_directory, "/tp.rds"), version = 2)
 
   # Remove .oslo_files created and the dataset
-  file.remove(paste0(.libPaths(), "/Bioregionalization/OSLOM/dataset.txt"))
-  file.remove(paste0(.libPaths(), "/Bioregionalization/OSLOM/time_seed.dat"))
+  file.remove(paste0(Bio_dir, "/OSLOM/dataset.txt"))
+  file.remove(paste0(Bio_dir, "/OSLOM/time_seed.dat"))
 
   # Remove all filed in .oslo_files folder
-  file.remove(paste0(.libPaths(),
-                     "/Bioregionalization/OSLOM/dataset.txt_oslo_files/",
-                     dir(paste0(
-                       .libPaths(),
-                       "/Bioregionalization/OSLOM/dataset.txt_oslo_files/"),
-                       pattern = "net")))
-  file.remove(paste0(.libPaths(),
-                     "/Bioregionalization/OSLOM/dataset.txt_oslo_files/",
-                     dir(paste0(
-                       .libPaths(),
-                       "/Bioregionalization/OSLOM/dataset.txt_oslo_files/"),
-                       pattern = "partitions_level")))
-  file.remove(paste0(.libPaths(),
-                     "/Bioregionalization/OSLOM/dataset.txt_oslo_files/",
-                     dir(paste0(
-                       .libPaths(),
-                       "/Bioregionalization/OSLOM/dataset.txt_oslo_files/"),
-                       pattern = "statistics_level")))
-  file.remove(paste0(.libPaths(),
-                     "/Bioregionalization/OSLOM/dataset.txt_oslo_files/",
-                     dir(paste0(
-                       .libPaths(),
-                       "/Bioregionalization/OSLOM/dataset.txt_oslo_files/"),
-                       pattern = "short_tp")))
-  file.remove(paste0(.libPaths(),
-                     "/Bioregionalization/OSLOM/dataset.txt_oslo_files/",
-                     dir(paste0(
-                       .libPaths(),
-                       "/Bioregionalization/OSLOM/dataset.txt_oslo_files/"),
-                       pattern = "tp")))
+  file.remove(paste0(Bio_dir, "/OSLOM/dataset.txt_oslo_files/",
+                     dir(paste0(Bio_dir, "/OSLOM/dataset.txt_oslo_files/"),
+                         pattern = "net")))
+  file.remove(paste0(Bio_dir, "/OSLOM/dataset.txt_oslo_files/",
+                     dir(paste0(Bio_dir, "/OSLOM/dataset.txt_oslo_files/"),
+                         pattern = "partitions_level")))
+  file.remove(paste0(Bio_dir, "/OSLOM/dataset.txt_oslo_files/",
+                     dir(paste0(Bio_dir, "/OSLOM/dataset.txt_oslo_files/"),
+                         pattern = "statistics_level")))
+  file.remove(paste0(Bio_dir, "/OSLOM/dataset.txt_oslo_files/",
+                     dir(paste0(Bio_dir, "/OSLOM/dataset.txt_oslo_files/"),
+                         pattern = "short_tp")))
+  file.remove(paste0(Bio_dir, "/OSLOM/dataset.txt_oslo_files/",
+                     dir(paste0(Bio_dir, "/OSLOM/dataset.txt_oslo_files/"),
+                         pattern = "tp")))
 
   # Reset previous working directory
   setwd(current_path)
