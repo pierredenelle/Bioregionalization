@@ -1,6 +1,11 @@
 
-zscore <- function(dat, sp_col, site_col, bioregion_col){
-  require(dplyr)
+zscore <- function(dat, sp_col, site_col, bioregion_col, plot = FALSE){
+
+  if(!is.data.frame(dat)){
+    stop("Input must be a data.frame with each row indicating the presence
+         of a species in a given site. The associated bioregion must be present
+         for each site.")
+  }
 
   if(!is.character(sp_col)){
     stop("sp_col must be a character string corresponding to the column
@@ -22,27 +27,75 @@ zscore <- function(dat, sp_col, site_col, bioregion_col){
   dat$site <- dat[, site_col]
   dat$bioregion <- dat[, bioregion_col]
 
-  # Total number of sites
-  n_site <- length(unique(dat$site))
+  # Number of cells per bioregions
+  clust <- table(dat[!duplicated(dat[, site]), "bioregion"])
+  clust <- data.frame(bioregion = names(clust),
+                      ncell = as.numeric(clust))
 
-  # Computing zscores
-  zscore_sp <- dat %>%
-    # occurrences of species
-    group_by(sp) %>%
-    mutate(n_i = n()) %>%
-    ungroup() %>%
-    # number of sites of each bioregion
-    group_by(bioregion) %>%
-    mutate(n_j = length(unique(site))) %>%
-    ungroup() %>%
-    # zscore
-    group_by(bioregion, sp) %>%
-    mutate(n_ij = n(), # occurrence of sp i in bioregion j
-           zscore = (n_ij - n_i*n_j/n_site)/
-             sqrt((n_site - n_j)/(n_site-1)*(1-n_j/n_site)*n_i*n_j/n_site)) %>%
-    distinct(sp, .keep_all = TRUE) %>% # removal of duplicates per sp
-    dplyr::select(-site) %>% # removal of pixel column
-    as.data.frame()
+  n_bioregion <- length(unique(dat[complete.cases(dat), bioregion]))
+  n_site <- length(unique(dat[complete.cases(dat), "site"]))
 
-  return(zscore_sp)
+  # Compute nij, ni & nj
+  agg <- aggregate(dat[, site], list(dat[, sp], dat[, bioregion]), length)
+  colnames(agg) <- c("sp", "bioregion", "nij")
+
+  # Number of cells in bioregion j where the specie i is present
+  nij <- xtabs(nij ~ sp + bioregion, data = agg)
+  # Number of cells where the specie i is present
+  ni <- replicate(ncol(nij), apply(nij, 1, sum))
+  # Number of cells in the bioregion j
+  nj <- t(replicate(nrow(nij), clust[, "ncell"]))
+
+  # Rhoij
+  num <- nij-((ni*nj)/n_site)
+  den <- sqrt((n_site-nj)/(n_site-1)*(1-(nj/n_site))*((ni*nj)/n_site))
+  rhoij <- num/den
+
+  # Lambda
+  rhoijp <- rhoij
+  # NA if zscore inferior to 95% quantile of Gaussian distribution
+  rhoijp[rhoijp < 1.96] <- NA
+  # for each species: sum of significant rhos over the bioregions
+  # dim(rhoij) = number of species (rows) and number of bioregions (columns)
+  rhoijp <- rhoijp/rowSums(rhoijp, na.rm = TRUE)
+
+  lambda <- NULL
+  for(k in 1:n_bioregion){ # loop over the bioregions
+    rhoijpk <- rhoijp[!is.na(rhoijp[, k]), ]
+    # Control for cases where only one species if assigned to one module
+    if(!is.null(dim(rhoijpk))){
+      lambda <- rbind(
+        lambda,
+        100*apply(rhoijpk, 2, sum, na.rm = TRUE)/nrow(rhoijpk))
+    } else{
+      rhoijpk <- t(as.matrix(rhoijpk))
+      lambda <- rbind(
+        lambda,
+        100*apply(rhoijpk, 2, sum, na.rm = TRUE)/nrow(rhoijpk))
+    }
+  }
+
+  # Save results
+  rho <- as.data.frame.matrix(rhoij) # species in rows & bioregions in columns
+  rownames(lambda) <- colnames(rho)
+  colnames(lambda) <- rownames(lambda)
+
+  # Output: the test-value matrix rho and
+  # the matrix of bioregion relationships lambda
+  if(plot == TRUE){
+    lambda_df <- as.data.frame(as.table(lambda))
+    colnames(lambda_df) <- c("bioregion", "link_bioregion", "lambda")
+    # Barplot
+    res_plot <- ggplot(lambda_df, aes(bioregion, lambda)) +
+      geom_bar(aes(fill = as.factor(link_bioregion)), stat = "identity") +
+      scale_fill_viridis_d("Bioregions") +
+      labs(title = "Interaction between bioregions",
+           x = "Bioregion", y = "Sum of contributions (%)") +
+      theme_classic() +
+      theme(panel.border = element_rect(fill = NA))
+
+    return(list(zscore_sp = rho, lambda = lambda, res_plot))
+  } else{
+    return(list(rho = rho, lambda = lambda))
+  }
 }

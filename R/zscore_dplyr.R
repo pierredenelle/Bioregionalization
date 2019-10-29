@@ -1,5 +1,5 @@
 
-lambda <- function(dat, sp_col, zscore_col, bioregion_col,
+zscore_dplyr <- function(dat, sp_col, site_col, bioregion_col,
                    criterion = "significant", plot = FALSE){
   require(dplyr)
   require(ggplot2)
@@ -9,19 +9,14 @@ lambda <- function(dat, sp_col, zscore_col, bioregion_col,
     with species.")
   }
 
-  if(!is.character(zscore_col)){
-    stop("zscore_col must be a character string corresponding to the column
-    with zscores per species/biroegion combination.")
+  if(!is.character(site_col)){
+    stop("site_col must be a character string corresponding to the column
+    with sites")
   }
 
   if(!is.character(bioregion_col)){
     stop("bioregion_col must be a character string corresponding to the column
     with bioregions.")
-  }
-
-  if(!is.numeric(dat[, zscore_col])){
-    stop("zscore column must contain numeric values corresponding to
-         the zscores of species (see zscore function).")
   }
 
   if(!(criterion %in% c("significant", "top10"))){
@@ -34,16 +29,38 @@ lambda <- function(dat, sp_col, zscore_col, bioregion_col,
 
   # Reassigning columns
   dat$sp <- dat[, sp_col]
-  dat$zscore_col <- dat[, zscore_col]
+  dat$site <- dat[, site_col]
   dat$bioregion <- dat[, bioregion_col]
 
-  # Criterion: either zscore>1.96 or top 10 zscores
+  # Total number of sites
+  n_site <- length(unique(dat$site))
+
+  # Computing zscores => WRONG because absence are not taken into account
+  zscore_sp <- dat %>%
+    # occurrences of species
+    group_by(sp) %>%
+    mutate(n_i = n()) %>%
+    ungroup() %>%
+    # number of sites of each bioregion
+    group_by(bioregion) %>%
+    mutate(n_j = length(unique(site))) %>%
+    ungroup() %>%
+    # zscore
+    group_by(bioregion, sp) %>%
+    mutate(n_ij = n(), # occurrence of sp i in bioregion j
+           zscore = (n_ij - n_i*n_j/n_site)/
+             sqrt((n_site - n_j)/(n_site-1)*(1-n_j/n_site)*n_i*n_j/n_site)) %>%
+    as.data.frame()
+
+  # Computing lambdas (connection between different bioregions)
+  # Criterion: either zscore > 1.96 or top 10 zscores
   # Computing lambda
   if(criterion == "significant"){
-    dat <- dat %>%
-      # NA if zscore inferior to 90% quantile
+    zscore_lambda <- zscore_sp %>%
+      # NA if zscore inferior to 95% quantile of Gaussian distribution
       mutate(zscore = ifelse(zscore < 1.96, NA, zscore)) %>%
-      group_by(bioregion) %>%
+      # for each species: sum of significant zscore over the bioregions
+      group_by(sp) %>%
       mutate(zscore_sum = sum(zscore, na.rm = TRUE),
              rho = zscore/zscore_sum) %>%
       ungroup() %>%
@@ -51,19 +68,20 @@ lambda <- function(dat, sp_col, zscore_col, bioregion_col,
 
   } else if(criterion == "top10"){
     # dat <- z_scores # for example
-    dat <- dat %>%
+    zscore_lambda <- zscore_sp %>%
       # NA if zscore inferior to 90% quantile
       mutate(zscore = ifelse(zscore < as.numeric(quantile(zscore, 0.9,
                                                           na.rm = TRUE)),
                              NA, zscore)) %>%
-      group_by(bioregion) %>%
+      # for each species: sum of significant zscore over the bioregions
+      group_by(sp) %>%
       mutate(zscore_sum = sum(zscore, na.rm = TRUE),
              rho = zscore/zscore_sum) %>%
       ungroup() %>%
       as.data.frame()
   }
 
-  dat2 <- dat[complete.cases(dat), ]
+  dat2 <- zscore_lambda[complete.cases(zscore_lambda), ]
   # Computing lambda indices
   lambda <- c()
   for(i in 1:length(unique(dat$bioregion))){
@@ -85,6 +103,11 @@ lambda <- function(dat, sp_col, zscore_col, bioregion_col,
                     tmp[, c("focal_bioregion", "bioregion", "sum_rho")])
   }
 
+  # Remove duplicates per sp and site column from zscore
+  zscore_sp <- zscore_sp %>%
+    distinct(sp, .keep_all = TRUE) %>%
+    dplyr::select(-site)
+
   if(plot == TRUE){
     res_plot <- ggplot(lambda, aes(focal_bioregion, sum_rho)) +
       geom_bar(aes(fill = as.factor(bioregion)), stat = "identity") +
@@ -92,8 +115,8 @@ lambda <- function(dat, sp_col, zscore_col, bioregion_col,
       labs(title = "Interaction between bioregions",
            x = "Bioregion", y = "Sum of contributions (%)") +
       theme_classic()
-    return(list(lambda, res_plot))
+    return(list(zscore_sp, lambda, res_plot))
   } else{
-    return(lambda)
+    return(list(zscore_sp, lambda))
   }
 }

@@ -168,7 +168,8 @@ $$
 # tmp <- left_join(sp_df, oslom_vignette, by = "site")
 tmp <- left_join(sp_df, oslom_vignette, by = "site")
 z_scores <- zscore(tmp, sp_col = "sp", site_col = "site",
-                   bioregion_col = "bioregion")
+                   bioregion_col = "bioregion",
+                   criterion = "significant", plot = TRUE)
 
 top10 <- z_scores %>%
   group_by(bioregion) %>%
