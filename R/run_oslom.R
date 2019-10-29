@@ -18,6 +18,11 @@ run_oslom <- function(dat, n_runs = 10, t_param = 0.1, cp_param = 0.5,
   and similarity metric")
   }
 
+  if(0 %in% dat[, 3]){
+    stop("OSLOM needs strictly positive weights to run. Remove the useless
+         lines from the input data.frame.")
+  }
+
   if(!(abs(n_runs - round(n_runs)) < .Machine$double.eps^0.5)){
     stop("n_runs must be an integer setting the number of runs.")
   }
@@ -80,7 +85,7 @@ run_oslom <- function(dat, n_runs = 10, t_param = 0.1, cp_param = 0.5,
 
   # Remove .oslo_files created and the dataset
   file.remove(paste0(Bio_dir, "/OSLOM/dataset.txt"))
-  file.remove(paste0(Bio_dir, "/OSLOM/time_seed.dat"))
+  file.remove(paste0(Bio_dir, "/time_seed.dat"))
 
   # Remove all filed in .oslo_files folder
   file.remove(paste0(Bio_dir, "/OSLOM/dataset.txt_oslo_files/",

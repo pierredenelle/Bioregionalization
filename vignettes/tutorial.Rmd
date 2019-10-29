@@ -84,6 +84,9 @@ sp_df <- medit[[1]] %>%
   mutate(site = as.character(site),
          sp = as.character(sp))
 
+# Random vector of abundances assigned for weighted networks
+sp_df$ab <- runif(n = nrow(sp_df), min = 0, max = 1)
+
 colnames(medit[[2]]) <- c("site", "geometry")
 medit[[2]]$site <- as.character(medit[[2]]$site)
 colnames(medit[[2]]) <- c("site", "geometry")
