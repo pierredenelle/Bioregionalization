@@ -14,15 +14,15 @@ LazyData: true
 Imports: Rcpp,
     SMUT,
     ecodist,
-    DescTools
+    DescTools,
+    ade4,
+    cluster,
     dplyr
 Suggests: knitr,
     rmarkdown,
     ggplot2,
     cowplot,
     sf,
-    reshape2,
-    ade4,
-    cluster
+    reshape2
 VignetteBuilder: knitr
 
