@@ -102,6 +102,10 @@ The first step is to convert the data.frame into a contingency table.
 #sp_mat <- contingency(sp_df, "site", "sp", "pa", binary = TRUE)
 sp_mat <- contingency(sp_df, "site", "sp", ab = NULL, binary = TRUE)
 knitr::kable(sp_mat[1:5, 1:5])
+
+# With weights
+sp_mat_w <- contingency(sp_df, "site", "sp", ab = "ab", binary = FALSE)
+
 ```
 
 We then need to project the network.
@@ -111,6 +115,11 @@ sp_proj <- project_network(sp_mat, similarity = "simpson")
 sp_proj <- sp_proj[, c("id1", "id2", "simpson")]
 
 knitr::kable(head(sp_proj))
+
+sp_proj_w <- project_network(sp_mat_w, similarity = "bray")
+sp_proj_w <- sp_proj_w[, c("id1", "id2", "bray")]
+
+knitr::kable(head(sp_proj_w))
 ```
 
 ![Steps of the biogeographical network analysis.1.Biogeographical bipartite network where grid cells and species are linked by the presence of a species (or a group of species) in a given grid cell during a certain time window. Note that there is no link between nodes belonging to the same set. 2.The bipartite network is then spatially projected by using a similarity measure of species composition between grid cells.Bioregions are then identified with a network community detection algorithm.3.The test value matrix based on the contribution of species to bioregions is computed. 4. Then, a network of similarity between species is built, based on the test value matrix. Groups of species sharing similar spatial features are identified using a community detection algorithm. 5.Finally, a coarse‐grained biogeographical network unveiling the biogeographical structure of the studied area and the relationship between bioregions is obtained.](../figures/Lenormand_et_al_2019_Figure2.png)
@@ -125,12 +134,24 @@ run_oslom(sp_proj, n_runs = 5, t_param = 0.1, cp_param = 0.5,
 Converting the OSLOM .tp file into a list.
 
 ```{r conversion_OSLOM}
-#res <- readLines("../OSLOM2/vignette.txt_oslo_files/tp")
 res <- readRDS("../../Bioregionalization_extra/tp.rds")
 oslom_vignette <- oslom_output(res, sp_mat)
 
+file.rename("D:/PIERRE_DENELLE/CarHab/Bioregionalization_extra/tp.rds",
+            "D:/PIERRE_DENELLE/CarHab/Bioregionalization_extra/tp_binary.rds")
+
+# With weights
+run_oslom(sp_proj_w, n_runs = 5, t_param = 0.1, cp_param = 0.5,
+          saving_directory = "D:/PIERRE_DENELLE/CarHab/Bioregionalization_extra/")
+
+res_w <- readRDS("../../Bioregionalization_extra/tp.rds")
+oslom_vignette_w <- oslom_output(res_w, sp_mat_w)
+
 print(paste0("Number of bioregions detected = ",
-             length(unique(oslom_vignette$bioregion))))
+             length(unique(oslom_vignette$bioregion)),
+             "; and with weights: ",
+             length(unique(oslom_vignette_w$bioregion))))
+
 ```
 
 Step 3 of Figure 1 (see Lenormand et al. (2019))

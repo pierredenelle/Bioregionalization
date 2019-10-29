@@ -42,6 +42,9 @@ project_network <- function(contingency_mat, similarity = "simpson"){
     # Similarity instead of dissimilarity
     abc$bray <- 1 - abc$bray
 
+    # Remove zeros
+    abc <- abc[which(abc$bray > 0), ]
+
   } else{
 
     # Get the number of species shared by two sites
