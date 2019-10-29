@@ -1,5 +1,6 @@
 
-zscore <- function(dat, sp_col, site_col, bioregion_col, plot = FALSE){
+zscore <- function(dat, sp_col, site_col, bioregion_col, plot = FALSE,
+                   output_format = "matrix"){
 
   if(!is.data.frame(dat)){
     stop("Input must be a data.frame with each row indicating the presence
@@ -22,21 +23,30 @@ zscore <- function(dat, sp_col, site_col, bioregion_col, plot = FALSE){
     with bioregions.")
   }
 
+  if(!is.character(output_format)){
+    stop("output_format must be a character string equal to 'matrix' or
+         'data.frame'. It determines the format of the output.")
+  }
+
+  if(!(output_format %in% c("matrix", "dataframe"))){
+    stop("output_format must be a character string equal to 'matrix' or
+         'data.frame'. It determines the format of the output.")
+  }
+
   # Reassigning columns
   dat$sp <- dat[, sp_col]
   dat$site <- dat[, site_col]
   dat$bioregion <- dat[, bioregion_col]
 
   # Number of cells per bioregions
-  clust <- table(dat[!duplicated(dat[, site]), "bioregion"])
-  clust <- data.frame(bioregion = names(clust),
-                      ncell = as.numeric(clust))
+  clust <- table(dat[!duplicated(dat[, "site"]), "bioregion"])
+  clust <- data.frame(bioregion = names(clust), ncell = as.numeric(clust))
 
-  n_bioregion <- length(unique(dat[complete.cases(dat), bioregion]))
+  n_bioregion <- length(unique(dat[complete.cases(dat), "bioregion"]))
   n_site <- length(unique(dat[complete.cases(dat), "site"]))
 
   # Compute nij, ni & nj
-  agg <- aggregate(dat[, site], list(dat[, sp], dat[, bioregion]), length)
+  agg <- aggregate(dat$site, list(dat$sp, dat$bioregion), length)
   colnames(agg) <- c("sp", "bioregion", "nij")
 
   # Number of cells in bioregion j where the specie i is present
@@ -80,13 +90,24 @@ zscore <- function(dat, sp_col, site_col, bioregion_col, plot = FALSE){
   rownames(lambda) <- colnames(rho)
   colnames(lambda) <- rownames(lambda)
 
+  # Data frame format for plot
+  lambda_plot <- as.data.frame(as.table(lambda))
+  colnames(lambda_plot) <- c("bioregion", "link_bioregion", "lambda")
+
+  if(output_format == "dataframe"){
+    # data.frame format for rho
+    rho <- as.data.frame(as.table(as.matrix(rho)))
+    colnames(rho) <- c("sp", "bioregion", "zscore")
+
+    lambda <- as.data.frame(as.table(lambda))
+    colnames(lambda) <- c("focal_bioregion", "bioregion", "lambda")
+  }
+
   # Output: the test-value matrix rho and
   # the matrix of bioregion relationships lambda
   if(plot == TRUE){
-    lambda_df <- as.data.frame(as.table(lambda))
-    colnames(lambda_df) <- c("bioregion", "link_bioregion", "lambda")
     # Barplot
-    res_plot <- ggplot(lambda_df, aes(bioregion, lambda)) +
+    res_plot <- ggplot(lambda_plot, aes(bioregion, lambda)) +
       geom_bar(aes(fill = as.factor(link_bioregion)), stat = "identity") +
       scale_fill_viridis_d("Bioregions") +
       labs(title = "Interaction between bioregions",
@@ -96,6 +117,6 @@ zscore <- function(dat, sp_col, site_col, bioregion_col, plot = FALSE){
 
     return(list(zscore_sp = rho, lambda = lambda, res_plot))
   } else{
-    return(list(rho = rho, lambda = lambda))
+    return(list(zscore_sp = rho, lambda = lambda))
   }
 }

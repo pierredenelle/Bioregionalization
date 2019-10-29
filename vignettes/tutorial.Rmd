@@ -168,10 +168,10 @@ $$
 # tmp <- left_join(sp_df, oslom_vignette, by = "site")
 tmp <- left_join(sp_df, oslom_vignette, by = "site")
 z_scores <- zscore(tmp, sp_col = "sp", site_col = "site",
-                   bioregion_col = "bioregion",
-                   criterion = "significant", plot = TRUE)
+                   bioregion_col = "bioregion", plot = TRUE,
+                   output_format = "dataframe")
 
-top10 <- z_scores %>%
+top10 <- z_scores[[1]] %>%
   group_by(bioregion) %>%
   top_n(n = 10, zscore) %>% # extract top 10
   mutate(rank = rank(-zscore, # ranking zcore in an ascending order
@@ -187,11 +187,9 @@ knitr::kable(top10[which(top10$bioregion == "2"), ])
 Interaction plots.
 
 ```{r lambda}
-ex_lambda <- lambda(dat = z_scores, sp_col = "sp", zscore_col = "zscore",
-                    bioregion_col = "bioregion",
-                    criterion = "top10", plot = TRUE)
+knitr::kable(head(z_scores[[2]]))
 
-ex_lambda
+z_scores[[3]]
 ```
 
 Example with Ward analysis and k-means clustering.
