@@ -1,7 +1,7 @@
 README
 ================
 
-# __Bioregionalization__ <img src="figures/France.png" align="right" alt="" width="200" />
+# __Bioregionalization__ <img src="figures/France.PNG" align="right" alt="" width="200" />
 
 # An R package to compare several methods of bioregionalization and estimate the contributions of species
 
