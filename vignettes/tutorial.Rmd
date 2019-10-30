@@ -3,7 +3,8 @@ title: "Tutorial for Bioregionalization R package"
 author: "Pierre Denelle"
 date: "`r Sys.Date()`"
 output: 
-  - pdf_document
+  html_vignette:
+    number_sections: true
 vignette: >
  %\VignetteIndexEntry{Tutorial for Bioregionalization R package}
  %\VignetteEngine{knitr::rmarkdown}
