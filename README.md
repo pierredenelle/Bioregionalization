@@ -1,8 +1,12 @@
 README
 ================
 
-[![Travis build
-status](https://travis-ci.org/pierredenelle/Bioregionalization.svg?branch=master)](https://travis-ci.org/pierredenelle/Bioregionalization)
+# __Bioregionalization__ <img src="figures/France.png" align="right" alt="" width="200" />
+
+# An R package to compare several methods of bioregionalization and estimate the contributions of species
+
+[![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg)](https://www.r-project.org/Licenses/GPL-3)
+[![Travis build status](https://travis-ci.org/pierredenelle/Bioregionalization.svg?branch=master)](https://travis-ci.org/pierredenelle/Bioregionalization)
 
 `Bioregionalization` is a package designed to compare several methods of
 clustering based on multivariate or network

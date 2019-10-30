@@ -17,6 +17,10 @@ body {
 text-align: justify}
 </style>
 
+The principle of the package is illustrated by the following figure.
+
+![Workflow of the package.](../figures/Bioregionalization_scheme2.png)
+
 ```{r setup, include=FALSE}
 
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE,
