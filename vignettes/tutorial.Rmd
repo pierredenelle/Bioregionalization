@@ -244,77 +244,7 @@ head(cz_bip[[1]])
 
 Projection on a map.
 
-```{r map}
-color_vector <- c(brewer.pal(12, "Paired"), brewer.pal(12, "Set3"))
-getPalette <- colorRampPalette(brewer.pal(9, "Set1"))
-
-plot_grid(
-  # Plot of Mediterreanean region
-  medit[[2]] %>%
-    ggplot() +
-    geom_sf() +
-    labs(title = expression("Mediterranean area, resolution 20x20km"^2),
-         x = "Longitude", y = "Latitude"),
-  # Plot of OSLOM bioregions
-  sp_df %>%
-    left_join(oslom_vignette, by = "site") %>%
-    distinct(site, .keep_all = TRUE) %>%
-    left_join(medit[[2]], by = "site") %>%
-    st_as_sf() %>%
-    group_by(bioregion) %>%
-    summarise() %>%
-    ggplot() +
-    geom_sf(aes(fill = as.factor(bioregion)), color = "black",  alpha = 0.8) +
-    scale_fill_manual("Bioregions",
-                      values = getPalette(length(unique(oslom_vignette$bioregion)))) +
-    labs(title = "OSLOM bioregions", x = "Longitude", y = "Latitude"),
-  
-  # Plot of Ward bioregions
-  sp_df %>%
-    left_join(ward_res, by = "site") %>%
-    distinct(site, .keep_all = TRUE) %>%
-    left_join(medit[[2]], by = "site") %>%
-    st_as_sf() %>%
-    group_by(cluster) %>%
-    summarise() %>%
-    ggplot() +
-    geom_sf(aes(fill = as.factor(cluster)), color = "black", alpha = 0.8) +
-    scale_fill_manual("Bioregions",
-                      values = getPalette(length(unique(ward_res$cluster)))) +
-    labs(title = "Ward bioregions", x = "Longitude", y = "Latitude"),
-  
-  # Plot of fastgreedy bioregions
-  sp_df %>%
-    left_join(bip_site, by = "site") %>%
-    distinct(site, .keep_all = TRUE) %>%
-    left_join(medit[[2]], by = "site") %>%
-    st_as_sf() %>%
-    group_by(module) %>%
-    summarise() %>%
-    ggplot() +
-    geom_sf(aes(fill = as.factor(module)), color = "black", alpha = 0.8) +
-    scale_fill_manual("Bioregions",
-                      values = getPalette(length(unique(bip_site$module)))) +
-    labs(title = "Fastgreedy bioregions", x = "Longitude", y = "Latitude"),
-  
-  # Plot of LPAwb bioregions
-  sp_df %>%
-    left_join(bip_site2, by = "site") %>%
-    distinct(site, .keep_all = TRUE) %>%
-    left_join(medit[[2]], by = "site") %>%
-    st_as_sf() %>%
-    group_by(module) %>%
-    summarise() %>%
-    ggplot() +
-    geom_sf(aes(fill = as.factor(module)), color = "black", alpha = 0.8) +
-    scale_fill_manual("Bioregions",
-                      values = getPalette(length(unique(bip_site2$module)))) +
-    labs(title = "LPAwb bioregions", x = "Longitude", y = "Latitude"),
-  nrow = 2)
-
-```
-
-```{r map_virtual_dataset, eval = FALSE, echo = FALSE}
+```{r map_virtual_dataset}
 plot_grid(
   # Plot of environmental values
   sp_df %>%
@@ -352,7 +282,7 @@ plot_grid(
     scale_color_viridis_d("Bioregions", option = "E") +
     scale_fill_viridis_d("Bioregions", option = "E") +
     coord_equal() +
-    labs(title = "Ward bioregions"), +
+    labs(title = "Ward bioregions") +
     theme(panel.background = element_rect(fill = "transparent",colour = NA)),
   
   # Plot of fastgreedy bioregions
@@ -388,7 +318,6 @@ All these functions can be called with the wrap-up `all_maps()` function.
 
 ```{r all_maps, eval = FALSE}
 all_maps()
-
 ```
 
 Another dataset is available within *Bioregionalization* and all the above
