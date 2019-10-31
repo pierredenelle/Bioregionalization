@@ -40,7 +40,12 @@ ward_cluster <- function(dat, method = "ward.D2", optim_method = "firstSEmax",
 
   if(K.max > nrow(dat)){
     stop("K.max should not be superior to the number of rows of the
-         contincenty matrix.")
+         contingency matrix.")
+  }
+
+  if(K.max > nrow(unique(dat))){
+    stop("K.max should not be superior to the unique number of rows of the
+         contingency matrix.")
   }
 
   # Distance matrix

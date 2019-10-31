@@ -167,7 +167,6 @@ $$
 $$
 
 ```{r z_scores}
-
 # tmp <- left_join(sp_df, oslom_vignette, by = "site")
 tmp <- left_join(sp_df, oslom_vignette, by = "site")
 z_scores <- zscore(tmp, sp_col = "sp", site_col = "site",
@@ -199,7 +198,7 @@ Example with Ward analysis and k-means clustering.
 
 ```{r ward_cluster}
 # CA_res <- CA_cluster(sp_mat)
-ward_res <- ward_cluster(sp_mat)
+ward_res <- ward_cluster(sp_mat, K.max = 6)
 ```
 
 Bipartite algorithms applied on example dataset.
