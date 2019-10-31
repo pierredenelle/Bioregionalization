@@ -6,10 +6,10 @@ output:
   html_vignette:
     number_sections: true
 vignette: >
- %\VignetteIndexEntry{Tutorial for Bioregionalization R package}
+%\VignetteIndexEntry{Tutorial for Bioregionalization R package}
  %\VignetteEngine{knitr::rmarkdown}
  %\VignetteEncoding{UTF-8} 
-editor_options: 
+ editor_options: 
 chunk_output_type: console
 ---
 
@@ -62,41 +62,24 @@ For every species in every cell, we could derive a suitability index.
 Species with suitability index inferior to 0.15 were arbitrarily set absent.
 
 ```{r dataset}
-# Import Mediterranean dataset
-data("medit")
 # Import virtual dataset
-# data("virtual_sp")
+data("virtual_sp")
+
+# Only species data.frame
+sp_df <- virtual[[1]]
 
 # Plot of environmental values
-# sp_df %>%
-#   distinct(site, .keep_all = TRUE) %>%
-#   ggplot(aes(x, y)) +
-#   geom_tile(aes(fill = env, color = env),
-#             alpha = 0.8, width = 1, height = 1) +
-#   scale_color_distiller("Value", palette = "OrRd") +
-#   scale_fill_distiller("Value", palette = "OrRd") +
-#   coord_equal() +
-#   labs(title = "Environmental variable") +
-# theme(panel.background = element_rect(fill = "transparent",colour = NA))
+sp_df %>%
+  distinct(site, .keep_all = TRUE) %>%
+  ggplot(aes(x, y)) +
+  geom_tile(aes(fill = env, color = env),
+            alpha = 0.8, width = 1, height = 1) +
+  scale_color_distiller("Value", palette = "OrRd") +
+  scale_fill_distiller("Value", palette = "OrRd") +
+  coord_equal() +
+  labs(title = "Environmental variable") +
+  theme(panel.background = element_rect(fill = "transparent",colour = NA))
 
-# Plot of Mediterranean area
-medit[[2]] %>%
-  ggplot() +
-  geom_sf() +
-  labs(title = expression("Mediterranean area, resolution 40x40km"^2),
-       x = "Longitude", y = "Latitude")
-
-sp_df <- medit[[1]] %>%
-  rename(site = id) %>%
-  mutate(site = as.character(site),
-         sp = as.character(sp))
-
-# Random vector of abundances assigned for weighted networks
-sp_df$ab <- runif(n = nrow(sp_df), min = 0, max = 1)
-
-colnames(medit[[2]]) <- c("site", "geometry")
-medit[[2]]$site <- as.character(medit[[2]]$site)
-colnames(medit[[2]]) <- c("site", "geometry")
 ```
 
 ```{r virtual_sp_response_curve, fig.label = "Example of response curve for one virtual species."}
@@ -115,7 +98,7 @@ sp_mat <- contingency(sp_df, "site", "sp", ab = NULL, binary = TRUE)
 knitr::kable(sp_mat[1:5, 1:5])
 
 # With weights
-sp_mat_w <- contingency(sp_df, "site", "sp", ab = "ab", binary = FALSE)
+sp_mat_w <- contingency(sp_df, "site", "sp", ab = "suitab", binary = FALSE)
 
 ```
 
@@ -137,28 +120,34 @@ knitr::kable(head(sp_proj_w))
 knitr::include_graphics("../figures/Lenormand_et_al_2019_Figure2.png")
 ```
 
-Running OSLOM.
+Running OSLOM. tp files containing the modularity results are directly stored
+within the virtual dataset, but the following chunk can be run independently.
 
-```{r run_OSLOM}
+Output of OSLOM are stored in a chosen directory and can be import into R with
+the command `readRDS()`.
+
+```{r run_OSLOM, eval = FALSE}
 run_oslom(sp_proj, n_runs = 5, t_param = 0.1, cp_param = 0.5,
           saving_directory = "D:/PIERRE_DENELLE/CarHab/Bioregionalization_extra/")
+
+res <- readRDS("../../Bioregionalization_extra/tp.rds")
+file.rename("../../Bioregionalization_extra/tp.rds",
+            "../../Bioregionalization_extra/tp_binary.rds")
+# With weights
+run_oslom(sp_proj_w, n_runs = 5, t_param = 0.1, cp_param = 0.5,
+          saving_directory = "../../Bioregionalization_extra/")
+
+res_w <- readRDS("../../Bioregionalization_extra/tp.rds")
+
 ```
 
 Converting the OSLOM .tp file into a list.
 
 ```{r conversion_OSLOM}
-res <- readRDS("../../Bioregionalization_extra/tp.rds")
-oslom_vignette <- oslom_output(res, sp_mat)
-
-file.rename("D:/PIERRE_DENELLE/CarHab/Bioregionalization_extra/tp.rds",
-            "D:/PIERRE_DENELLE/CarHab/Bioregionalization_extra/tp_binary.rds")
-
+# Format OSLOM output into a data.frame
+oslom_vignette <- oslom_output(virtual[[2]], sp_mat)
 # With weights
-run_oslom(sp_proj_w, n_runs = 5, t_param = 0.1, cp_param = 0.5,
-          saving_directory = "D:/PIERRE_DENELLE/CarHab/Bioregionalization_extra/")
-
-res_w <- readRDS("../../Bioregionalization_extra/tp.rds")
-oslom_vignette_w <- oslom_output(res_w, sp_mat_w)
+oslom_vignette_w <- oslom_output(virtual[[3]], sp_mat_w)
 
 print(paste0("Number of bioregions detected = ",
              length(unique(oslom_vignette$bioregion)),
@@ -208,7 +197,7 @@ z_scores[[3]]
 
 Example with Ward analysis and k-means clustering.
 
-```{r CA_cluster}
+```{r ward_cluster}
 # CA_res <- CA_cluster(sp_mat)
 ward_res <- ward_cluster(sp_mat)
 ```
@@ -397,4 +386,38 @@ plot_grid(
 ```
 
 All these functions can be called with the wrap-up `all_maps()` function.
+
+```{r all_maps, eval = FALSE}
+all_maps()
+
+```
+
+Another dataset is available within *Bioregionalization* and all the above
+analyses can be run in an identical fashion.
+
+```{r mediterreanean, eval = FALSE}
+# Import Mediterranean dataset
+data("medit")
+
+# Plot of Mediterranean area
+medit[[2]] %>%
+  ggplot() +
+  geom_sf() +
+  labs(title = expression("Mediterranean area, resolution 40x40km"^2),
+       x = "Longitude", y = "Latitude")
+
+sp_df <- medit[[1]] %>%
+  rename(site = id) %>%
+  mutate(site = as.character(site),
+         sp = as.character(sp))
+
+# Random vector of abundances assigned for weighted networks
+sp_df$ab <- runif(n = nrow(sp_df), min = 0, max = 1)
+
+colnames(medit[[2]]) <- c("site", "geometry")
+medit[[2]]$site <- as.character(medit[[2]]$site)
+colnames(medit[[2]]) <- c("site", "geometry")
+
+```
+
 
