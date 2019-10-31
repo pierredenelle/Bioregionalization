@@ -6,10 +6,10 @@ output:
   html_vignette:
     number_sections: true
 vignette: >
-%\VignetteIndexEntry{Tutorial for Bioregionalization R package}
+ %\VignetteIndexEntry{Tutorial for Bioregionalization R package}
  %\VignetteEngine{knitr::rmarkdown}
  %\VignetteEncoding{UTF-8} 
- editor_options: 
+editor_options: 
 chunk_output_type: console
 ---
 
