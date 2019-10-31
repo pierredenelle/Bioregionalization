@@ -93,8 +93,8 @@ knitr::include_graphics("../figures/sp1_suitability.png")
 The first step is to convert the data.frame into a contingency table.
 
 ```{r contingency_matrix}
-#sp_mat <- contingency(sp_df, "site", "sp", "pa", binary = TRUE)
-sp_mat <- contingency(sp_df, "site", "sp", ab = NULL, binary = TRUE)
+sp_mat <- contingency(sp_df[which(sp_df$pa != 0), ],
+                      "site", "sp", ab = NULL, binary = TRUE)
 knitr::kable(sp_mat[1:5, 1:5])
 
 # With weights
