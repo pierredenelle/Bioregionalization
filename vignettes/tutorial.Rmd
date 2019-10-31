@@ -20,7 +20,9 @@ text-align: justify}
 
 The principle of the package is illustrated by the following figure.
 
-![Workflow of the package.](../figures/Bioregionalization_scheme2.png)
+```{r package_scheme, fig.label = "Workflow of the package."}
+knitr::include_graphics("../figures/Bioregionalization_scheme2.png")
+```
 
 ```{r setup, include=FALSE}
 
@@ -97,9 +99,13 @@ medit[[2]]$site <- as.character(medit[[2]]$site)
 colnames(medit[[2]]) <- c("site", "geometry")
 ```
 
-![Example of response curve for one virtual species.](../figures/sp1_response_curve.png)
+```{r virtual_sp_response_curve, fig.label = "Example of response curve for one virtual species."}
+knitr::include_graphics("../figures/sp1_response_curve.png")
+```
 
-![Example of suitability map for one virtual species.](../figures/sp1_suitability.png)
+```{r virtual_sp_map, fig.label = "Example of suitability map for one virtual species."}
+knitr::include_graphics("../figures/sp1_suitability.png")
+```
 
 The first step is to convert the data.frame into a contingency table.
 
@@ -127,7 +133,9 @@ sp_proj_w <- sp_proj_w[, c("id1", "id2", "bray")]
 knitr::kable(head(sp_proj_w))
 ```
 
-![Steps of the biogeographical network analysis.1.Biogeographical bipartite network where grid cells and species are linked by the presence of a species (or a group of species) in a given grid cell during a certain time window. Note that there is no link between nodes belonging to the same set. 2.The bipartite network is then spatially projected by using a similarity measure of species composition between grid cells.Bioregions are then identified with a network community detection algorithm.3.The test value matrix based on the contribution of species to bioregions is computed. 4. Then, a network of similarity between species is built, based on the test value matrix. Groups of species sharing similar spatial features are identified using a community detection algorithm. 5.Finally, a coarse‐grained biogeographical network unveiling the biogeographical structure of the studied area and the relationship between bioregions is obtained.](../figures/Lenormand_et_al_2019_Figure2.png)
+```{r fig_network_analysis, fig.label = "Steps of the biogeographical network analysis.1.Biogeographical bipartite network where grid cells and species are linked by the presence of a species (or a group of species) in a given grid cell during a certain time window. Note that there is no link between nodes belonging to the same set. 2.The bipartite network is then spatially projected by using a similarity measure of species composition between grid cells.Bioregions are then identified with a network community detection algorithm.3.The test value matrix based on the contribution of species to bioregions is computed. 4. Then, a network of similarity between species is built, based on the test value matrix. Groups of species sharing similar spatial features are identified using a community detection algorithm. 5.Finally, a coarse‐grained biogeographical network unveiling the biogeographical structure of the studied area and the relationship between bioregions is obtained."}
+knitr::include_graphics("../figures/Lenormand_et_al_2019_Figure2.png")
+```
 
 Running OSLOM.
 
@@ -161,8 +169,9 @@ print(paste0("Number of bioregions detected = ",
 
 Step 3 of Figure 1 (see Lenormand et al. (2019))
 
-![Principle of the zscore calculation.](../figures/zscore_scheme.png)
-
+```{r zscore_scheme, fig.label = "Principle of the zscore calculation."}
+knitr::include_graphics("../figures/zscore_scheme.png")
+```
 
 $$
 \rho_{ij} = \frac{n_{ij} - \frac{n_in_j}{n}}{\sqrt(\frac{n-n_j}{n-1}(1-\frac{n_j}{n})\frac{n_jn_i}{n})}
