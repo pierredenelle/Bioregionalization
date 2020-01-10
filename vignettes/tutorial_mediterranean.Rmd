@@ -45,15 +45,18 @@ options(tinytex.verbose = TRUE)
 
 ```
 
-`virtual_sp` is a dataset simulated that comes with the package. This dataset
-relies on the response curve of virtual species to a virtual raster. The
-virtual raster contains 10000 cells and was simulated using `gstat` R package.
+`virtual_sp` is a dataset simulated that comes with the package.
+This dataset relies on the response curve of virtual species to a virtual
+raster.
+The virtual raster contains 10000 cells and was simulated using `gstat`
+R package.
 [See here for details.](http://santiago.begueria.es/2010/10/generating-spatially-correlated-random-fields-with-r/)
 
-Based on this layer, the `virtualspecies` R package (Leroy et al. 2015) was
-used to simulate a Gaussian response curve of 100 virtual species. The mean and
-standard deviation of the response function was varying among species, such as
-some of them are more or less generalists/specialists.
+Based on this layer, the `virtualspecies` R package (Leroy et al. 2015)
+was used to simulate the response curve of 100 virtual species.
+A Gaussian curve was used.
+The mean and standard deviation of the response function was varying among
+species, such as some of them are more or less generalists/specialists.
 
 For every species in every cell, we could derive a suitability index.
 Species with suitability index inferior to 0.15 were arbitrarily set absent.
@@ -80,11 +83,11 @@ sp_df %>%
 ```
 
 ```{r virtual_sp_response_curve, fig.label = "Example of response curve for one virtual species."}
-knitr::include_graphics("figures/sp1_response_curve.png")
+knitr::include_graphics("../figures/sp1_response_curve.png")
 ```
 
 ```{r virtual_sp_map, fig.label = "Example of suitability map for one virtual species."}
-knitr::include_graphics("figures/sp1_suitability.png")
+knitr::include_graphics("../figures/sp1_suitability.png")
 ```
 
 The first step is to convert the data.frame into a contingency table.
@@ -96,7 +99,7 @@ knitr::kable(sp_mat[1:5, 1:5])
 
 # With weights
 sp_mat_w <- contingency(sp_df, "site", "sp", ab = "suitab", binary = FALSE)
-knitr::kable(sp_mat_w[1:5, 1:5])
+
 ```
 
 We then need to project the network.
@@ -114,7 +117,7 @@ knitr::kable(head(sp_proj_w))
 ```
 
 ```{r fig_network_analysis, fig.label = "Steps of the biogeographical network analysis.1.Biogeographical bipartite network where grid cells and species are linked by the presence of a species (or a group of species) in a given grid cell during a certain time window. Note that there is no link between nodes belonging to the same set. 2.The bipartite network is then spatially projected by using a similarity measure of species composition between grid cells.Bioregions are then identified with a network community detection algorithm.3.The test value matrix based on the contribution of species to bioregions is computed. 4. Then, a network of similarity between species is built, based on the test value matrix. Groups of species sharing similar spatial features are identified using a community detection algorithm. 5.Finally, a coarse‐grained biogeographical network unveiling the biogeographical structure of the studied area and the relationship between bioregions is obtained."}
-knitr::include_graphics("figures/Lenormand_et_al_2019_Figure2.png")
+knitr::include_graphics("../figures/Lenormand_et_al_2019_Figure2.png")
 ```
 
 Running OSLOM. tp files containing the modularity results are directly stored
@@ -127,14 +130,14 @@ the command `readRDS()`.
 run_oslom(sp_proj, n_runs = 5, t_param = 0.1, cp_param = 0.5,
           saving_directory = "D:/PIERRE_DENELLE/CarHab/Bioregionalization_extra/")
 
-res <- readRDS("D:/PIERRE_DENELLE/CarHab/Bioregionalization_extra/tp.rds")
-file.rename("D:/PIERRE_DENELLE/CarHab/Bioregionalization_extra/tp.rds",
-            "D:/PIERRE_DENELLE/CarHab/Bioregionalization_extra/tp_binary.rds")
+res <- readRDS("../../Bioregionalization_extra/tp.rds")
+file.rename("../../Bioregionalization_extra/tp.rds",
+            "../../Bioregionalization_extra/tp_binary.rds")
 # With weights
 run_oslom(sp_proj_w, n_runs = 5, t_param = 0.1, cp_param = 0.5,
-          saving_directory = "D:/PIERRE_DENELLE/CarHab/Bioregionalization_extra/")
+          saving_directory = "../../Bioregionalization_extra/")
 
-res_w <- readRDS("D:/PIERRE_DENELLE/CarHab/Bioregionalization_extra/tp.rds")
+res_w <- readRDS("../../Bioregionalization_extra/tp.rds")
 
 ```
 
@@ -156,7 +159,7 @@ print(paste0("Number of bioregions detected = ",
 Step 3 of Figure 1 (see Lenormand et al. (2019))
 
 ```{r zscore_scheme, fig.label = "Principle of the zscore calculation."}
-knitr::include_graphics("figures/zscore_scheme.png")
+knitr::include_graphics("../figures/zscore_scheme.png")
 ```
 
 $$
@@ -165,7 +168,7 @@ $$
 
 ```{r z_scores}
 # tmp <- left_join(sp_df, oslom_vignette, by = "site")
-tmp <- left_join(sp_df[which(sp_df$pa == 1), ], oslom_vignette, by = "site")
+tmp <- left_join(sp_df, oslom_vignette, by = "site")
 z_scores <- zscore(tmp, sp_col = "sp", site_col = "site",
                    bioregion_col = "bioregion", plot = TRUE,
                    output_format = "dataframe")
@@ -316,3 +319,33 @@ All these functions can be called with the wrap-up `all_maps()` function.
 ```{r all_maps, eval = FALSE}
 all_maps()
 ```
+
+Another dataset is available within *Bioregionalization* and all the above
+analyses can be run in an identical fashion.
+
+```{r mediterreanean, eval = FALSE}
+# Import Mediterranean dataset
+data("medit")
+
+# Plot of Mediterranean area
+medit[[2]] %>%
+  ggplot() +
+  geom_sf() +
+  labs(title = expression("Mediterranean area, resolution 40x40km"^2),
+       x = "Longitude", y = "Latitude")
+
+sp_df <- medit[[1]] %>%
+  rename(site = id) %>%
+  mutate(site = as.character(site),
+         sp = as.character(sp))
+
+# Random vector of abundances assigned for weighted networks
+sp_df$ab <- runif(n = nrow(sp_df), min = 0, max = 1)
+
+colnames(medit[[2]]) <- c("site", "geometry")
+medit[[2]]$site <- as.character(medit[[2]]$site)
+colnames(medit[[2]]) <- c("site", "geometry")
+
+```
+
+

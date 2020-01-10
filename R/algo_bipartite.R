@@ -6,7 +6,7 @@ algo_bipartite <- function(dat, algo = "greedy", weight = FALSE){
          as columns.")
   }
 
-  if(!(algo %in% c("greedy", "girvan", "walktrap", "louvain", "LPAwb"))){
+  if(!(algo %in% c("greedy", "girvan", "walktrap", "louvain", "LPAwb", "infomap"))){
     stop("Provided algorithm to compute modularity is not available.
      Please chose among the followings:
          greedy, girvan, walktrap, louvain, or LPAwb.")
@@ -66,6 +66,8 @@ algo_bipartite <- function(dat, algo = "greedy", weight = FALSE){
       network_mod <- cluster_walktrap(graph = network)
     } else if(algo == "louvain"){
       network_mod <- cluster_louvain(graph = network)
+    } else if(algo == "infomap"){
+      network_mod <- cluster_infomap(graph = network)
     }
     # Convert results into data.frame
     network_lab <- c()
