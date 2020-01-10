@@ -357,9 +357,38 @@ all_bioregions <- sp_df %>%
   distinct(site, .keep_all = TRUE) %>%
   rename(infomap = module)
 
-# Groups of pixels through the different methods
-list_group_oslom <- 
+# sabre package: test between oslom and ward
+# Spatial Association Between REgionalizations
+library(sabre)
+library(sf)
 
+bioregions_sf <- st_as_sf(all_bioregions, coords = c("x", "y")) %>%
+  st_cast(to = "MULTILINESTRING")
+
+po <- vmeasure_calc(x = bioregions_sf, x_name = oslom, y = bioregions_sf, y_name = ward)
+
+# Groups of pixels through the different methods
+list_group_oslom <- by(all_bioregions$site, all_bioregions$oslom, identity)
+list_group_oslom <- lapply(list_group_oslom, as.character)
+
+list_group_ward <- by(all_bioregions$site, all_bioregions$ward, identity)
+list_group_ward <- lapply(list_group_ward, as.character)
+
+list_group_greedy <- by(all_bioregions$site, all_bioregions$greedy, identity)
+list_group_greedy<- lapply(list_group_greedy, as.character)
+
+list_group_lpawb <- by(all_bioregions$site, all_bioregions$lpawb, identity)
+list_group_lpawb <- lapply(list_group_lpawb, as.character)
+
+list_group_infomap <- by(all_bioregions$site, all_bioregions$infomap, identity)
+list_group_infomap <- lapply(list_group_infomap, as.character)
+
+list_combined <- lapply(list_group_oslom, function(x) x[x %in% list_group_ward[[1]]])
+list_combined <- lapply(list_combined, function(x) x[x %in% list_group_greedy[[1]]])
+list_combined <- lapply(list_combined, function(x) x[x %in% list_group_lpawb[[1]]])
+list_combined <- lapply(list_combined, function(x) x[x %in% list_group_infomap[[1]]])
+
+# For one combination only
 list1_oslom <-
   all_bioregions[which(all_bioregions$oslom == unique(all_bioregions$oslom)[1]),
                  "site"]
