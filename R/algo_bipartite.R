@@ -33,7 +33,7 @@ algo_bipartite <- function(dat, algo = "greedy", weight = FALSE){
     network_lab$cat <- ifelse(network_lab$node %in% rownames(dat),
                               "site", "sp")
 
-  } else if(algo %in% c("greedy", "girvan", "walktrap", "louvain")){
+  } else if(algo %in% c("greedy", "girvan", "walktrap", "louvain", "infomap")){
     # https://stats.stackexchange.com/questions/209086/community-detection-and-modularity
     # https://www.sixhat.net/finding-communities-in-networks-with-r-and-igraph.html
 
