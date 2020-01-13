@@ -34,6 +34,6 @@ The .pdf of the vignette can also be accessed
 
 ## 3 Dependencies
 
-`Bioregionalization` depends on `dplyr`, `ecodist`, `reshape2`,
+`Bioregionalization` depends on `dplyr`, `ecodist`, `reshape2`, `fastcluster`,
 `DescTools`, `ade4`, `cluster`, `sf`, `ggplot2`, `Rcpp`, `SMUT` and
 `igraph`.

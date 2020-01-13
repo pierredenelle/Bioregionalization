@@ -48,9 +48,20 @@ ward_cluster <- function(dat, method = "ward.D2", optim_method = "firstSEmax",
          contingency matrix.")
   }
 
-  # Distance matrix
-  dist_sp_mat <- dist(dat)
-  h <- hclust(dist_sp_mat, method = method)
+  # Euclidean distance matrix
+  # dist_sp_mat <- dist(dat)
+  euc_dist <- function(m) {
+    mtm <- Matrix::tcrossprod(m)
+    sq <- rowSums(m*m)
+    sqrt(outer(sq,sq,"+") - 2*mtm)
+  } 
+  
+  dist_sp_mat <- euc_dist(dat)
+  dist_sp_mat <- as.dist(dist_sp_mat)
+  
+  #h <- hclust(dist_sp_mat, method = method)
+  require(fastcluster)
+  h <- fastcluster::hclust(dist_sp_mat, method = "ward.D2")
   # plot(h)
 
   # Determine optimal numbers of clusters
