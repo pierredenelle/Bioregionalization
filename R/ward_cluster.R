@@ -61,7 +61,7 @@ ward_cluster <- function(dat, method = "ward.D2", optim_method = "firstSEmax",
   
   #h <- hclust(dist_sp_mat, method = method)
   require(fastcluster)
-  h <- fastcluster::hclust(dist_sp_mat, method = "ward.D2")
+  h <- fastcluster::hclust(dist_sp_mat, method = method)
   # plot(h)
 
   # Determine optimal numbers of clusters
