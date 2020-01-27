@@ -6,7 +6,7 @@ output:
   html_vignette:
     number_sections: true
 vignette: >
-%\VignetteIndexEntry{Tutorial for Bioregionalization R package}
+ %\VignetteIndexEntry{Tutorial for Bioregionalization R package}
  %\VignetteEngine{knitr::rmarkdown}
  %\VignetteEncoding{UTF-8} 
  editor_options: 
@@ -82,11 +82,11 @@ sp_df %>%
 ```
 
 ```{r virtual_sp_response_curve, fig.label = "Example of response curve for one virtual species."}
-knitr::include_graphics("figures/sp50_response_curve.png")
+knitr::include_graphics("../figures/sp50_response_curve.png")
 ```
 
 ```{r virtual_sp_map, fig.label = "Example of suitability map for one virtual species."}
-knitr::include_graphics("figures/sp50_suitability.png")
+knitr::include_graphics("../figures/sp50_suitability.png")
 ```
 
 The first step is to convert the data.frame into a contingency table.
@@ -119,7 +119,7 @@ knitr::kable(head(sp_proj_w))
 ```
 
 ```{r fig_network_analysis, fig.label = "Steps of the biogeographical network analysis.1.Biogeographical bipartite network where grid cells and species are linked by the presence of a species (or a group of species) in a given grid cell during a certain time window. Note that there is no link between nodes belonging to the same set. 2.The bipartite network is then spatially projected by using a similarity measure of species composition between grid cells.Bioregions are then identified with a network community detection algorithm.3.The test value matrix based on the contribution of species to bioregions is computed. 4. Then, a network of similarity between species is built, based on the test value matrix. Groups of species sharing similar spatial features are identified using a community detection algorithm. 5.Finally, a coarse‐grained biogeographical network unveiling the biogeographical structure of the studied area and the relationship between bioregions is obtained."}
-knitr::include_graphics("figures/Lenormand_et_al_2019_Figure2.png")
+knitr::include_graphics("../figures/Lenormand_et_al_2019_Figure2.png")
 ```
 
 # Community detection: Order Statistics Local Optimization Method
@@ -165,11 +165,29 @@ print(paste0("Number of bioregions detected = ",
 Step 3 of Figure 1 (see Lenormand et al. (2019))
 
 ```{r zscore_scheme, fig.label = "Principle of the zscore calculation."}
-knitr::include_graphics("figures/zscore_scheme.png")
+knitr::include_graphics("../figures/zscore_scheme.png")
 ```
 
 $$
 \rho_{ij} = \frac{n_{ij} - \frac{n_in_j}{n}}{\sqrt(\frac{n-n_j}{n-1}(1-\frac{n_j}{n})\frac{n_jn_i}{n})}
+$$
+
+The interactions between the different bioregions can then be calculated following
+these equations:
+
+$$
+\hat\rho_{ij}^{+} = {\rho_{ij}}_{\rho_{ij}>1.96}
+$$
+We normalize the rows:
+
+$$
+\hat\rho_{ij}^{+} = \frac{\rho_{ij}^{+}}{\sum_i\rho_{ij}^{+}}
+$$
+
+Finally, we determine for each bioregion how each set of species contributes to it.
+
+$$
+\lambda_{jj'} = \frac{1}{|A_j|}\sum_{i \in A_{j}}\hat\rho_{jj'}^{+}
 $$
 
 ```{r z_scores}
