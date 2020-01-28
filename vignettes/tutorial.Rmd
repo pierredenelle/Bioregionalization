@@ -6,11 +6,11 @@ output:
   html_vignette:
     number_sections: true
 vignette: >
- %\VignetteIndexEntry{Tutorial for Bioregionalization R package}
+%\VignetteIndexEntry{Tutorial for Bioregionalization R package}
  %\VignetteEngine{knitr::rmarkdown}
  %\VignetteEncoding{UTF-8} 
  editor_options: 
-chunk_output_type: console
+ chunk_output_type: console
 ---
 
 <style>
@@ -190,9 +190,43 @@ $$
 \lambda_{jj'} = \frac{1}{|A_j|}\sum_{i \in A_{j}}\hat\rho_{jj'}^{+}
 $$
 
+```{r z_scores_dummy}
+
+# 10 sites with species richness belonging to [1, 3]
+set.seed(1)
+sites <- sapply(paste0("site", seq(1:10)),
+                function(x) rep(x, sample(c(1:3), 1)))
+# Pool of 5 species distributed across the sites
+species <- lapply(sites,
+                  function(x) sample(paste0("sp", seq(1:5)), 
+                                     length(x), replace = TRUE))
+# 3 bioregions assigned randomly
+bioregions <- sample(paste0("bio", seq(1:3)), length(sites), replace = TRUE)
+bioregions <- data.frame(site = names(sites),
+                         bioregion = bioregions)
+
+# Conversion to data frame
+fuzzy <- data.frame(site = as.character(unlist(sites)),
+                    sp = as.character(unlist(species)))
+fuzzy <- left_join(fuzzy, bioregions, by = "site")
+
+table(fuzzy$sp, fuzzy$bioregion)
+
+# Compute zscores
+zscores <- zscore(fuzzy, sp_col = "sp", site_col = "site",
+                   bioregion_col = "bioregion", plot = TRUE,
+                   output_format = "dataframe")
+zscores[[3]]
+
+
+
+```
+
 ```{r z_scores}
 # tmp <- left_join(sp_df, oslom_vignette, by = "site")
 tmp <- left_join(sp_df[which(sp_df$pa == 1), ], oslom_vignette, by = "site")
+table(tmp$sp, tmp$bioregion)
+
 z_scores <- zscore(tmp, sp_col = "sp", site_col = "site",
                    bioregion_col = "bioregion", plot = TRUE,
                    output_format = "dataframe")
@@ -457,10 +491,10 @@ all100 %>%
   summarise() %>%
   ggplot() +
   geom_sf(aes(color = as.factor(pair_bio)))
-  geom_tile(aes(fill = as.factor(pair_bio), color = as.factor(pair_bio)),
-            alpha = 0.8, width = 1, height = 1)
-  
-  ggplot(aes(x, y)) +
+geom_tile(aes(fill = as.factor(pair_bio), color = as.factor(pair_bio)),
+          alpha = 0.8, width = 1, height = 1)
+
+ggplot(aes(x, y)) +
   geom_tile(aes(fill = as.factor(pair_bio), color = as.factor(pair_bio)),
             alpha = 0.8, width = 1, height = 1) +
   scale_color_viridis_d("Bioregions", option = "E") +
