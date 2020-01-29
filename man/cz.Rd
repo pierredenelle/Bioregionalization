@@ -1,7 +1,7 @@
-\name{run_OSLOM}
-\alias{run_OSLOM}
-\title{Convert the .tp output of OSLOM algorithm into a data.frame,
-with each site having its bioregion.}
+\name{cz}
+\alias{cz}
+\title{Calculate the Cz scores of sites and species for a given
+bipartite network.}
 \usage{
 cz(dat, sp_col, site_col, bip, ab = NULL)
 }
@@ -17,6 +17,9 @@ stand for the name of the node, its module and its bipartite category.}
 
 \item{site_col}{a character string corresponding to the column
     with sites.}
+
+\item{ab}{a logical indicating whether abundances should be taken into
+account.}
 
 }
 \description{

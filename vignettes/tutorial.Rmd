@@ -214,7 +214,7 @@ table(fuzzy$sp, fuzzy$bioregion)
 
 # Compute zscores
 zscores <- zscore(fuzzy, sp_col = "sp", site_col = "site",
-                   bioregion_col = "bioregion", output_format = "matrix")
+                  bioregion_col = "bioregion", output_format = "matrix")
 zscores
 
 # Interactions between bioregions
@@ -317,6 +317,16 @@ lambda <- interact(input_network = "bipartite",
 knitr::kable(head(lambda[[1]]))
 # Plot
 lambda[[2]]
+
+```
+
+# All contributions
+```{r map_virtual_dataset}
+tmp <- left_join(sp_df[which(sp_df$pa > 0), ], oslom_vignette, by = "site")
+# table(tmp$sp, tmp$bioregion)
+
+scores <- contribute(dat = tmp, sp_col = "sp", site_col = "site",
+                     bioregion_col = "bioregion")
 
 ```
 
