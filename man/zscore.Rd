@@ -16,9 +16,14 @@ readLines() function. This object can be generated with run_oslom() function.}
 
 \item{bioregion_col}{a character string corresponding to the column
     with bioregions.}
+
+\item{output_format}{a character string equal to 'matrix' or 'data.frame'
+that determines the format of the output}
+
 }
+
 \description{
-See Guimera et Amaral, Nature, 2005.
+See Lenormand et al., Ecology and Evolution, 2019.
 }
 \details{}
 \section{Note}{}

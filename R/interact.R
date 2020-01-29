@@ -1,6 +1,5 @@
 
-interact <- function(dat, sp_col, bioregion_col, score_col, plot = FALSE,
-                   output_format = "matrix"){
+interact <- function(dat, plot = FALSE, output_format = "matrix"){
 
   if(!is.matrix(dat)){
     stop("Input must be a data.frame with each row indicating the contribution
@@ -31,13 +30,16 @@ interact <- function(dat, sp_col, bioregion_col, score_col, plot = FALSE,
   }
 
   # Lambda
-  rhoijp <- rhoij
+  rhoijp <- dat
   # NA if zscore inferior to 95% quantile of Gaussian distribution
   # rhoijp[rhoijp < 1.96] <- NA
   # NA if zscore inferior to mean of the contribution per bioregion
-  rhoijp[rhoijp < colMeans(rhoijp)] <- NA
+  rhoijp[sweep(rhoijp, 2, colMeans(rhoijp), "<")] <- NA
+  # NA if zscore negative
+  rhoijp[rhoijp < 0] <- NA
+
   # for each species: sum of significant rhos over the bioregions
-  # dim(rhoij) = number of species (rows) and number of bioregions (columns)
+  # dim(dat) = number of species (rows) and number of bioregions (columns)
   rhoijp <- rhoijp/rowSums(rhoijp, na.rm = TRUE)
 
   lambda <- NULL
@@ -61,7 +63,7 @@ interact <- function(dat, sp_col, bioregion_col, score_col, plot = FALSE,
 
   # Save results
   rownames(lambda) <- colnames(dat)
-  colnames(lambda) <- rownames(dat)
+  colnames(lambda) <- rownames(lambda)
 
   # Data frame format for plot
   lambda_plot <- as.data.frame(as.table(lambda))

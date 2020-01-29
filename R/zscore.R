@@ -1,5 +1,5 @@
 
-zscore <- function(dat, sp_col, site_col, bioregion_col, plot = FALSE,
+zscore <- function(dat, sp_col, site_col, bioregion_col,
                    output_format = "matrix"){
 
   if(!is.data.frame(dat)){
@@ -62,12 +62,12 @@ zscore <- function(dat, sp_col, site_col, bioregion_col, plot = FALSE,
   rhoij <- num/den
 
   if(output_format == "dataframe"){
-    rho <- as.data.frame.matrix(rhoij) # species in rows & bioregions in columns
-    # data.frame format for rho
-    rho <- as.data.frame(as.table(as.matrix(rho)))
-    colnames(rho) <- c("sp", "bioregion", "zscore")
+    rhoij <- as.data.frame.matrix(rhoij) # species in rows & bioregions in columns
+    # data.frame format for rhoij
+    rhoij <- as.data.frame(as.table(as.matrix(rhoij)))
+    colnames(rhoij) <- c("sp", "bioregion", "zscore")
   }
 
-  # Output: the test-value matrix rho
-  return(zscore_sp = rho)
+  # Output: the test-value matrix rhoij
+  return(zscore_sp = rhoij)
 }

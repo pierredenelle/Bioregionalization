@@ -214,24 +214,23 @@ table(fuzzy$sp, fuzzy$bioregion)
 
 # Compute zscores
 zscores <- zscore(fuzzy, sp_col = "sp", site_col = "site",
-                   bioregion_col = "bioregion", plot = TRUE,
-                   output_format = "dataframe")
-zscores[[3]]
+                   bioregion_col = "bioregion", output_format = "matrix")
+zscores
 
-
+# Interactions between bioregions
+interact(dat = zscores, plot = FALSE, output_format = "matrix")
 
 ```
 
 ```{r z_scores}
 # tmp <- left_join(sp_df, oslom_vignette, by = "site")
 tmp <- left_join(sp_df[which(sp_df$pa == 1), ], oslom_vignette, by = "site")
-table(tmp$sp, tmp$bioregion)
+# table(tmp$sp, tmp$bioregion)
 
 z_scores <- zscore(tmp, sp_col = "sp", site_col = "site",
-                   bioregion_col = "bioregion", plot = TRUE,
-                   output_format = "dataframe")
+                   bioregion_col = "bioregion", output_format = "dataframe")
 
-top10 <- z_scores[[1]] %>%
+top10 <- z_scores %>%
   group_by(bioregion) %>%
   top_n(n = 10, zscore) %>% # extract top 10
   mutate(rank = rank(-zscore, # ranking zcore in an ascending order
@@ -247,9 +246,13 @@ knitr::kable(top10[which(top10$bioregion == "2"), ])
 ## Interaction between bioregions
 
 ```{r lambda}
-knitr::kable(head(z_scores[[2]]))
+z_scores <- zscore(tmp, sp_col = "sp", site_col = "site",
+                   bioregion_col = "bioregion", output_format = "matrix")
 
-z_scores[[3]]
+lambda <- interact(dat = z_scores, plot = TRUE, output_format = "matrix")
+knitr::kable(head(lambda[[1]]))
+# Plot
+lambda[[2]]
 ```
 
 # Clustering
