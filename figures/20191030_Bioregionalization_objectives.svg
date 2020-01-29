@@ -17,7 +17,7 @@
    version="1.1"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    sodipodi:docname="20191030_Bioregionalization_objectives.svg"
-   inkscape:export-filename="D:\PIERRE_DENELLE\CarHab\Bioregionalization\figures\Bioregionalization_scheme2.png"
+   inkscape:export-filename="D:\PIERRE_DENELLE\CarHab\Bioregionalization\figures\Bioregionalization_scheme3.png"
    inkscape:export-xdpi="299.99124"
    inkscape:export-ydpi="299.99124">
   <defs
@@ -672,6 +672,36 @@
          style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
          transform="matrix(-0.4,0,0,-0.4,-4,0)" />
     </marker>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath2565-8">
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.7700541;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 289.87354,773.95439 c -12.51617,-23.84033 17.26368,-39.35107 49.44813,-40.54309 38.14452,-3.57604 105.44508,22.33126 113.78918,39.6155 14.90023,20.26429 -36.12716,19.41839 -50.43136,36.70263 -23.84032,17.88025 -9.21606,49.3138 -37.22844,53.48586 -22.05231,4.17205 -73.56015,0.42656 -84.2883,-16.85766 -14.3042,-10.13216 16.4589,-50.35092 8.71079,-72.40324 z"
+         id="path2567-6"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccccc" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath6142-6">
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.7700541;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 212.2156,860.20961 c -12.51617,-23.84033 17.26368,-39.35107 49.44813,-40.54309 38.14453,-3.57604 105.44508,22.33126 113.78919,39.6155 14.90021,20.26428 -36.12717,19.41838 -50.43136,36.70262 -23.84033,17.88024 -9.21607,49.31379 -37.22846,53.48585 -22.0523,4.17206 -73.56014,0.42658 -84.28829,-16.85766 -14.3042,-10.13214 16.4589,-50.35091 8.71079,-72.40322 z"
+         id="path6144-3"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccccc" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath6123-7">
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.7700541;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 212.21559,859.70453 c -12.51617,-23.84033 17.26368,-39.35107 49.44813,-40.54309 38.14454,-3.57604 105.44509,22.33126 113.7892,39.6155 14.90021,20.26428 -36.12717,19.41838 -50.43136,36.70262 -23.84033,17.88024 -9.21607,49.31383 -37.22847,53.48583 -22.0523,4.1721 -73.56014,0.4266 -84.28829,-16.85764 -14.3042,-10.13214 16.4589,-50.35091 8.71079,-72.40322 z"
+         id="path6125-6"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccccc" />
+    </clipPath>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -680,15 +710,15 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.45357143"
-     inkscape:cx="124.12556"
-     inkscape:cy="473.59729"
+     inkscape:zoom="0.64144687"
+     inkscape:cx="597.226"
+     inkscape:cy="490.29498"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1920"
      inkscape:window-height="1017"
-     inkscape:window-x="1672"
+     inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1" />
   <metadata
@@ -1891,7 +1921,7 @@
        xml:space="preserve"
        id="flowRoot4136-5-1-0-5-2-8-4-35-8-7"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0.01%;font-family:Corbel;-inkscape-font-specification:Corbel;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       transform="translate(560.60298,462.40389)"><flowRegion
+       transform="translate(541.85298,462.40389)"><flowRegion
          id="flowRegion4138-8-1-0-6-5-5-5-41-6-9"><rect
            id="rect4140-3-7-2-5-1-5-6-8-7-1"
            width="353.00278"
@@ -1900,7 +1930,7 @@
            y="301.11618"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Corbel;-inkscape-font-specification:Corbel" /></flowRegion><flowPara
          id="flowPara4142-4-00-2-8-4-0-8-8-0-0"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:20px;line-height:1.25;font-family:'Courier New';-inkscape-font-specification:'Courier New Bold';fill:#3e4cff;fill-opacity:1">compare()</flowPara></flowRoot>    <g
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:20px;line-height:1.25;font-family:'Courier New';-inkscape-font-specification:'Courier New Bold';fill:#3e4cff;fill-opacity:1">comparison()</flowPara></flowRoot>    <g
        id="g4195"
        transform="translate(-26.721276,-30.460304)">
       <path
@@ -2109,7 +2139,7 @@
          style="font-size:27.49999986px;line-height:1.25"
          id="flowPara7770">Contributions of species</flowPara></flowRoot>    <g
        id="g2600"
-       transform="matrix(0.50721725,0,0,0.50721725,353.93992,370.06321)">
+       transform="matrix(0.50721725,0,0,0.50721725,353.93992,520.06321)">
       <g
          id="g2621">
         <path
@@ -2135,7 +2165,7 @@
            clip-path="url(#clipPath2565)"
            transform="translate(-51.884656,111.80778)" />
         <path
-           style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.77248073;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.77248061;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            d="m 237.98888,885.76217 c -12.51617,-23.84033 17.26368,-39.35107 49.44813,-40.54309 38.14452,-3.57604 105.44508,22.33126 113.78918,39.6155 14.90022,20.26429 -36.12716,19.41839 -50.43136,36.70263 -23.84032,17.88025 -9.21606,49.3138 -37.22844,53.48586 -22.05231,4.17206 -73.56015,0.42657 -84.2883,-16.85766 -14.3042,-10.13215 16.4589,-50.35092 8.71079,-72.40324 z"
            id="path4192-0"
            inkscape:connector-curvature="0"
@@ -2219,7 +2249,7 @@
       </g>
     </g>
     <flowRoot
-       transform="translate(542.90058,776.64924)"
+       transform="translate(542.90058,926.64924)"
        xml:space="preserve"
        id="flowRoot4136-5-1-6-9-1"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0.01%;font-family:Corbel;-inkscape-font-specification:Corbel;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"><flowRegion
@@ -2284,7 +2314,7 @@
        inkscape:transform-center-x="-25.599582"
        inkscape:transform-center-y="3.0698316" />
     <flowRoot
-       transform="translate(541.58222,870.30377)"
+       transform="translate(541.58222,862.07537)"
        xml:space="preserve"
        id="flowRoot4136-5-1-6-9-1-1"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0.01%;font-family:Corbel;-inkscape-font-specification:Corbel;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"><flowRegion
@@ -2298,39 +2328,7 @@
          style="font-size:22.5px;line-height:1.25"
          id="flowPara10606-6">Overlap between</flowPara><flowPara
          style="font-size:22.5px;line-height:1.25"
-         id="flowPara10649">bioregions</flowPara></flowRoot>    <g
-       id="g10702"
-       transform="translate(7.072297)">
-      <ellipse
-         ry="24.147266"
-         rx="43.53825"
-         cy="917.49243"
-         cx="515.77667"
-         id="path10651"
-         style="opacity:0.75;fill:#ef7979;fill-opacity:1;stroke:#c11717;stroke-width:1.42124999;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
-      <ellipse
-         ry="16.570221"
-         rx="29.876608"
-         cy="937.86969"
-         cx="526.88501"
-         id="path10651-7"
-         style="opacity:0.75;fill:#d7d00c;fill-opacity:1;stroke:#8a8608;stroke-width:1.875;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
-      <ellipse
-         ry="20.597874"
-         rx="37.138584"
-         cy="936.90051"
-         cx="491.00452"
-         id="path10651-6"
-         style="opacity:0.75;fill:#0c84d7;fill-opacity:1;stroke:#075285;stroke-width:1.875;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
-      <ellipse
-         ry="7.4651136"
-         rx="13.459825"
-         cy="904.38129"
-         cx="503.62338"
-         id="path10651-67"
-         style="opacity:0.75;fill:#9bd70c;fill-opacity:1;stroke:#547406;stroke-width:1.875;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
-    </g>
-    <flowRoot
+         id="flowPara10649">pair of bioregions</flowPara></flowRoot>    <flowRoot
        transform="translate(-8.3016301,778.39482)"
        xml:space="preserve"
        id="flowRoot4136-5-1-6-4-8"
@@ -2356,5 +2354,103 @@
            y="26.886175"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Corbel;-inkscape-font-specification:Corbel" /></flowRegion><flowPara
          style="font-size:22.5px;line-height:1.25"
-         id="flowPara7770-5-9">zscore for projected</flowPara></flowRoot>  </g>
+         id="flowPara7770-5-9">zscore for projected</flowPara></flowRoot>    <g
+       id="g1903"
+       transform="translate(0,2.6374544)">
+      <g
+         transform="matrix(0.60613839,0,0,0.60613839,204.76177,354.85489)"
+         id="g1890">
+        <ellipse
+           style="opacity:0.75;fill:#0c84d7;fill-opacity:1;stroke:#075285;stroke-width:1.875;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+           id="path10651-6"
+           cx="545.21143"
+           cy="911.32355"
+           rx="37.138584"
+           ry="20.597874" />
+        <ellipse
+           style="opacity:0.75;fill:#d7d00c;fill-opacity:1;stroke:#8a8608;stroke-width:1.875;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+           id="path10651-7"
+           cx="530.30347"
+           cy="928.36969"
+           rx="29.876608"
+           ry="16.570221" />
+      </g>
+      <g
+         transform="matrix(0.60613839,0,0,0.60613839,141.27469,275.08028)"
+         id="g1878">
+        <g
+           id="g1797-0"
+           transform="translate(32.996606,89.587077)">
+          <ellipse
+             ry="16.570221"
+             rx="29.876608"
+             cy="937.86969"
+             cx="533.95734"
+             id="path10651-7-1"
+             style="opacity:0.75;fill:#d7d00c;fill-opacity:1;stroke:#8a8608;stroke-width:1.875;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+        </g>
+        <ellipse
+           style="opacity:0.75;fill:#ef7979;fill-opacity:1;stroke:#c11717;stroke-width:1.875;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+           id="path10651-0"
+           cx="560.04749"
+           cy="1012.5604"
+           rx="8.8242264"
+           ry="6.4236403" />
+      </g>
+      <g
+         transform="matrix(0.60613839,0,0,0.60613839,71.923164,332.09048)"
+         id="g1883">
+        <g
+           id="g1797-2"
+           transform="translate(134.20822,68.760138)">
+          <ellipse
+             ry="20.597874"
+             rx="37.138584"
+             cy="920.82355"
+             cx="548.8653"
+             id="path10651-6-3"
+             style="opacity:0.75;fill:#0c84d7;fill-opacity:1;stroke:#075285;stroke-width:1.875;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+        </g>
+        <ellipse
+           style="opacity:0.75;fill:#ef7979;fill-opacity:1;stroke:#c11717;stroke-width:1.875;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+           id="path10651-1"
+           cx="661.25909"
+           cy="991.73346"
+           rx="8.8242264"
+           ry="6.4236403" />
+      </g>
+    </g>
+    <flowRoot
+       transform="translate(536.63931,772.86895)"
+       xml:space="preserve"
+       id="flowRoot4136-5-1-6-9-1-1-2"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0.01%;font-family:Corbel;-inkscape-font-specification:Corbel;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"><flowRegion
+         id="flowRegion4138-8-1-9-0-5-0-9"><rect
+           id="rect4140-3-7-6-5-6-6-3"
+           width="169.8297"
+           height="59.599007"
+           x="40.406101"
+           y="26.886175"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Corbel;-inkscape-font-specification:Corbel" /></flowRegion><flowPara
+         style="font-size:22.5px;line-height:1.25"
+         id="flowPara10649-0">Metric of continuity</flowPara></flowRoot>    <g
+       id="g2128"
+       transform="matrix(0.50787698,0,0,0.50787698,323.76669,249.32627)">
+      <rect
+         transform="translate(77.97629,257.59674)"
+         clip-path="url(#clipPath6142-6)"
+         y="906.58344"
+         x="200.08109"
+         height="46.090652"
+         width="120.06638"
+         id="rect4413-6-7-8"
+         style="opacity:1;fill:#0c84d7;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <path
+         sodipodi:nodetypes="ccccccc"
+         inkscape:connector-curvature="0"
+         id="path4192-1-24"
+         d="m 290.19189,1117.3013 c -12.51617,-23.8404 17.26368,-39.3511 49.44813,-40.5431 38.14453,-3.5761 105.44508,22.3312 113.78919,39.6155 14.90021,20.2643 -36.12717,19.4184 -50.43136,36.7026 -23.84033,17.8802 -9.21607,49.3138 -37.22846,53.4859 -22.0523,4.172 -73.56014,0.4265 -84.28829,-16.8577 -14.3042,-10.1321 16.4589,-50.3509 8.71079,-72.4032 z"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.76887917;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
+  </g>
 </svg>

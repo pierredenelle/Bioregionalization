@@ -61,62 +61,13 @@ zscore <- function(dat, sp_col, site_col, bioregion_col, plot = FALSE,
   den <- sqrt((n_site-nj)/(n_site-1)*(1-(nj/n_site))*((ni*nj)/n_site))
   rhoij <- num/den
 
-  # Lambda
-  rhoijp <- rhoij
-  # NA if zscore inferior to 95% quantile of Gaussian distribution
-  rhoijp[rhoijp < 1.96] <- NA
-  # for each species: sum of significant rhos over the bioregions
-  # dim(rhoij) = number of species (rows) and number of bioregions (columns)
-  rhoijp <- rhoijp/rowSums(rhoijp, na.rm = TRUE)
-
-  lambda <- NULL
-  for(k in 1:n_bioregion){ # loop over the bioregions
-    rhoijpk <- rhoijp[!is.na(rhoijp[, k]), ]
-    # Control for cases where only one species if assigned to one module
-    if(!is.null(dim(rhoijpk))){
-      lambda <- rbind(
-        lambda,
-        100*apply(rhoijpk, 2, sum, na.rm = TRUE)/nrow(rhoijpk))
-    } else{
-      rhoijpk <- t(as.matrix(rhoijpk))
-      lambda <- rbind(
-        lambda,
-        100*apply(rhoijpk, 2, sum, na.rm = TRUE)/nrow(rhoijpk))
-    }
-  }
-
-  # Save results
-  rho <- as.data.frame.matrix(rhoij) # species in rows & bioregions in columns
-  rownames(lambda) <- colnames(rho)
-  colnames(lambda) <- rownames(lambda)
-
-  # Data frame format for plot
-  lambda_plot <- as.data.frame(as.table(lambda))
-  colnames(lambda_plot) <- c("bioregion", "link_bioregion", "lambda")
-
   if(output_format == "dataframe"){
+    rho <- as.data.frame.matrix(rhoij) # species in rows & bioregions in columns
     # data.frame format for rho
     rho <- as.data.frame(as.table(as.matrix(rho)))
     colnames(rho) <- c("sp", "bioregion", "zscore")
-
-    lambda <- as.data.frame(as.table(lambda))
-    colnames(lambda) <- c("focal_bioregion", "bioregion", "lambda")
   }
 
-  # Output: the test-value matrix rho and
-  # the matrix of bioregion relationships lambda
-  if(plot == TRUE){
-    # Barplot
-    res_plot <- ggplot(lambda_plot, aes(bioregion, lambda)) +
-      geom_bar(aes(fill = as.factor(link_bioregion)), stat = "identity") +
-      scale_fill_viridis_d("Bioregions") +
-      labs(title = "Interaction between bioregions",
-           x = "Bioregion", y = "Sum of contributions (%)") +
-      theme_classic() +
-      theme(panel.border = element_rect(fill = NA))
-
-    return(list(zscore_sp = rho, lambda = lambda, res_plot))
-  } else{
-    return(list(zscore_sp = rho, lambda = lambda))
-  }
+  # Output: the test-value matrix rho
+  return(zscore_sp = rho)
 }
