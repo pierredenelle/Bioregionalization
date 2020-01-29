@@ -155,9 +155,27 @@ all_maps <- function(dat, form = "tidy", site, sp, ab = NULL, binary = TRUE,
     list_res["ward"] <- ward_res
   }
 
-  # Contributing species (zscore and cz)
+  # Contribution of species
+  tmp <- left_join(dat, list_res["oslom"], by = "site")
+  scores <- contribute(dat = tmp, sp_col = "sp", site_col = "site",
+                       bioregion_col = "bioregion")
 
   # Links between modules
+  lambda <- interact(input_network = "projected",
+                     dat = scores, plot = TRUE, output_format = "matrix")
 
-  return(list_res)
+  # Pixels all the time together
+  # Gather all the bioregionalizations
+  all_bioregions <- dat %>%
+    select(site, x, y, env) %>%
+    distinct(site, .keep_all = TRUE) %>%
+    left_join(list_res["oslom"], by = "site") %>% # add OSLOM
+    rename(oslom = bioregion) %>%
+    left_join(list_res["ward"], by = "site") %>% # add Ward
+    rename(ward = cluster)
+
+  # Test of comparison function
+  all100 <- comparison(all_bioregions, bio_col = c(5:6))
+
+  return(list_res, scores, lambda, all100)
 }

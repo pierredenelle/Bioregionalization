@@ -5,11 +5,13 @@ date: "`r Sys.Date()`"
 output: 
   html_vignette:
     number_sections: true
+  word_vignette:
+    number_sections: true
 vignette: >
-%\VignetteIndexEntry{Tutorial for Bioregionalization R package}
+ %\VignetteIndexEntry{Tutorial for Bioregionalization R package}
  %\VignetteEngine{knitr::rmarkdown}
  %\VignetteEncoding{UTF-8} 
- editor_options: 
+editor_options: 
  chunk_output_type: console
 ---
 
@@ -21,7 +23,7 @@ text-align: justify}
 The principle of the package is illustrated by the following figure.
 
 ```{r package_scheme, fig.label = "Workflow of the package."}
-knitr::include_graphics("../figures/Bioregionalization_scheme2.png")
+knitr::include_graphics("../figures/Bioregionalization_scheme3.png")
 ```
 
 ```{r setup, include=FALSE}
@@ -312,16 +314,17 @@ cz_bip <- cz(dat = sp_df[which(sp_df$pa > 0), ], sp_col = "sp",
 head(cz_bip[[1]])
 
 # Interaction
-lambda <- interact(input_network = "bipartite",
-                   dat = link_cz, plot = TRUE, output_format = "matrix")
-knitr::kable(head(lambda[[1]]))
-# Plot
-lambda[[2]]
+# lambda <- interact(input_network = "bipartite",
+#                    dat = link_cz, plot = TRUE, output_format = "matrix")
+# knitr::kable(head(lambda[[1]]))
+# # Plot
+# lambda[[2]]
 
 ```
 
 # All contributions
-```{r map_virtual_dataset}
+
+```{r contrib}
 tmp <- left_join(sp_df[which(sp_df$pa > 0), ], oslom_vignette, by = "site")
 # table(tmp$sp, tmp$bioregion)
 
@@ -420,7 +423,7 @@ plot_grid(
 
 # Comparison of different bioregionalizations
 
-```{r comparison, eval = FALSE}
+```{r comparison, eval = TRUE}
 # Gather all the bioregionalizations
 all_bioregions <- sp_df %>%
   select(site, x, y, env) %>%
@@ -542,7 +545,63 @@ all100 %>%
 geom_tile(aes(fill = as.factor(pair_bio), color = as.factor(pair_bio)),
           alpha = 0.8, width = 1, height = 1)
 
-##
+```
+
+```{r autocorrelation, eval = TRUE}
+
+## Autocorrelation
+# https://mgimond.github.io/Spatial/spatial-autocorrelation-in-r.html
+library(sp)
+all_bioregions_sp <- all_bioregions
+all_bioregions_sp <- all_bioregions_sp[complete.cases(all_bioregions_sp), ]
+coordinates(all_bioregions_sp) <- ~x+y
+
+all_bioregions_sp$oslom <- as.numeric(as.character(all_bioregions_sp$oslom))
+all_bioregions_sp$ward <- as.numeric(as.character(all_bioregions_sp$ward))
+all_bioregions_sp$greedy <- as.numeric(as.character(all_bioregions_sp$greedy))
+all_bioregions_sp$lpawb <- as.numeric(as.character(all_bioregions_sp$lpawb))
+all_bioregions_sp$infomap <- as.numeric(as.character(all_bioregions_sp$infomap))
+
+coo <- coordinates(all_bioregions_sp)
+# S.dist  <-  spdep::dnearneigh(coo, 0, 100)
+# lw <- spdep::nb2listw(S.dist, style="W",zero.policy=T) 
+# MI  <-  spdep::moran.mc(all_bioregions_sp$oslom, lw, nsim=599,zero.policy=T)
+# plot(MI, main = "", las = 1) 
+
+bws <- c(3, 4, 6, 9, 12, 18, 24)
+moran_oslom <- lctools::moransI.v(coo, bws, all_bioregions_sp@data$oslom)
+moran_ward <- lctools::moransI.v(coo, bws, all_bioregions_sp@data$ward)
+moran_greedy <- lctools::moransI.v(coo, bws, all_bioregions_sp@data$greedy)
+moran_lpawb <- lctools::moransI.v(coo, bws, all_bioregions_sp@data$lpawb)
+moran_infomap <- lctools::moransI.v(coo, bws, all_bioregions_sp@data$infomap)
+
+all_moran <-
+  rbind(data.frame(
+    algo = "oslom", k = moran_oslom[, "k"],
+    moran = moran_oslom[, "Moran's I"]),
+    data.frame(algo = "ward", k = moran_ward[, "k"],
+               moran = moran_ward[, "Moran's I"]),
+    data.frame(algo = "ward", k = moran_ward[, "k"],
+               moran = moran_greedy[, "Moran's I"]),
+    data.frame(algo = "greedy", k = moran_greedy[, "k"],
+               moran = moran_lpawb[, "Moran's I"]),
+    data.frame(algo = "infomap", k = moran_infomap[, "k"],
+               moran = moran_infomap[, "Moran's I"])
+  )
+
+ggplot(all_moran, aes(k, moran)) +
+  geom_line(aes(color = as.factor(algo))) +
+  geom_point(aes(color = as.factor(algo))) +
+  scale_color_viridis_d("Method") +
+  labs(x = "# of neighbours", y = "Moran's I") +
+  theme_classic() +
+  theme(panel.border = element_rect(fill= NA, color = "black"))
+
+```
+
+We can as well compare each pair of bioregion to each other.
+
+```{r pair_sabre, eval = FALSE}
 # sabre package: test between oslom and ward
 # Spatial Association Between REgionalizations
 library(sabre)
@@ -551,7 +610,8 @@ library(sf)
 bioregions_sf <- st_as_sf(all_bioregions, coords = c("x", "y")) %>%
   st_cast(to = "MULTILINESTRING")
 
-po <- vmeasure_calc(x = bioregions_sf, x_name = oslom, y = bioregions_sf, y_name = ward)
+po <- vmeasure_calc(x = bioregions_sf, x_name = oslom,
+                    y = bioregions_sf, y_name = ward)
 
 # Groups of pixels through the different methods
 list_group_oslom <- by(all_bioregions$site, all_bioregions$oslom, identity)
@@ -595,101 +655,6 @@ list1_combined <- list1_combined[list1_combined %in% list1_infomap]
 all_bioregions$combined <- NA
 all_bioregions[which(all_bioregions$site %in% list1_combined), "combined"] <- "1"
 
-comparison()
-
-plot_grid(
-  # Plot of environmental values
-  sp_df %>%
-    distinct(site, .keep_all = TRUE) %>%
-    ggplot(aes(x, y)) +
-    geom_tile(aes(fill = env, color = env),
-              alpha = 0.8, width = 1, height = 1) +
-    scale_color_distiller("Value", palette = "OrRd") +
-    scale_fill_distiller("Value", palette = "OrRd") +
-    coord_equal() +
-    labs(title = "Environmental variable") +
-    theme(panel.background = element_rect(fill = "transparent",colour = NA)),
-  
-  # Plot of OSLOM bioregions
-  sp_df %>%
-    left_join(oslom_vignette, by = "site") %>%
-    distinct(site, .keep_all = TRUE) %>%
-    ggplot(aes(x, y)) +
-    geom_tile(aes(fill = as.factor(bioregion), color = as.factor(bioregion)),
-              alpha = 0.8, width = 1, height = 1) +
-    scale_color_brewer("Bioregions", palette = "Paired") +
-    scale_fill_brewer("Bioregions", palette = "Paired") +
-    # scale_color_viridis_d("Bioregions", option = "E") +
-    # scale_fill_viridis_d("Bioregions", option = "E") +
-    coord_equal() +
-    labs(title = "OSLOM bioregions") +
-    theme(panel.background = element_rect(fill = "transparent",
-                                          colour = "black")),
-  
-  # Plot of Ward bioregions
-  sp_df %>%
-    left_join(ward_res, by = "site") %>%
-    distinct(site, .keep_all = TRUE) %>%
-    ggplot(aes(x, y)) +
-    geom_tile(aes(fill = as.factor(cluster), color = as.factor(cluster)),
-              alpha = 0.8, width = 1, height = 1) +
-    scale_color_brewer("Bioregions", palette = "Paired") +
-    scale_fill_brewer("Bioregions", palette = "Paired") +
-    coord_equal() +
-    labs(title = "Ward bioregions") +
-    theme(panel.background = element_rect(fill = "transparent", colour = NA)),
-  
-  # Plot of fastgreedy bioregions
-  sp_df %>%
-    left_join(bip_site, by = "site") %>%
-    distinct(site, .keep_all = TRUE) %>%
-    ggplot(aes(x, y)) +
-    geom_tile(aes(fill = as.factor(module), color = as.factor(module)),
-              alpha = 0.8, width = 1, height = 1) +
-    scale_color_brewer("Bioregions", palette = "Paired") +
-    scale_fill_brewer("Bioregions", palette = "Paired") +
-    coord_equal() +
-    labs(title = "Bipartite greedy bioregions") +
-    theme(panel.background = element_rect(fill = "transparent", colour = NA)),
-  
-  # Plot of LPAwb bioregions
-  sp_df %>%
-    left_join(bip_site2, by = "site") %>%
-    distinct(site, .keep_all = TRUE) %>%
-    ggplot(aes(x, y)) +
-    geom_tile(aes(fill = as.factor(module), color = as.factor(module)),
-              alpha = 0.8, width = 1, height = 1) +
-    scale_color_brewer("Bioregions", palette = "Paired") +
-    scale_fill_brewer("Bioregions", palette = "Paired") +
-    coord_equal() +
-    labs(title = "LPAwb+ greedy bioregions") +
-    theme(panel.background = element_rect(fill = "transparent", colour = NA)),
-  
-  # Plot of Infomap bioregions
-  sp_df %>%
-    left_join(bip_site_infomap, by = "site") %>%
-    distinct(site, .keep_all = TRUE) %>%
-    ggplot(aes(x, y)) +
-    geom_tile(aes(fill = as.factor(module), color = as.factor(module)),
-              alpha = 0.8, width = 1, height = 1) +
-    scale_color_brewer("Bioregions", palette = "Paired") +
-    scale_fill_brewer("Bioregions", palette = "Paired") +
-    coord_equal() +
-    labs(title = "Infomap bioregions") +
-    theme(panel.background = element_rect(fill = "transparent", colour = NA)),
-  
-  # Plot of combined groups of pixels
-  ggplot(all_bioregions, aes(x, y)) +
-    geom_tile(aes(fill = as.factor(combined), color = as.factor(combined)),
-              alpha = 0.8, width = 1, height = 1) +
-    scale_color_brewer("Bioregions", palette = "Paired") +
-    scale_fill_brewer("Bioregions", palette = "Paired", na.value = "grey") +
-    coord_equal() +
-    labs(title = "Combined groups of pixels") +
-    theme(panel.background = element_rect(fill = "transparent", colour = NA)),
-  
-  nrow = 2)
-
 ```
 
 # Run all the steps together
@@ -697,5 +662,12 @@ plot_grid(
 All these functions can be called with the wrap-up `all_maps()` function.
 
 ```{r all_maps, eval = FALSE}
-all_maps()
+all_res <- all_maps(dat = sp_df, form = "tidy", site, sp, ab = NULL,
+                    binary = TRUE,
+                    similarity = "simpson", network_algo = "both",
+                    saving_directory,
+                    bipartite_algo = "greedy", weight = FALSE,
+                    clustering = TRUE, ward_method = "ward.D2",
+                    optim_method = "firstSEmax", nstart = 25, B = 50,
+                    K.max = 20)
 ```
