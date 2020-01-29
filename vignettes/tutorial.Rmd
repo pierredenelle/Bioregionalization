@@ -249,7 +249,8 @@ knitr::kable(top10[which(top10$bioregion == "2"), ])
 z_scores <- zscore(tmp, sp_col = "sp", site_col = "site",
                    bioregion_col = "bioregion", output_format = "matrix")
 
-lambda <- interact(dat = z_scores, plot = TRUE, output_format = "matrix")
+lambda <- interact(input_network = "projected",
+                   dat = z_scores, plot = TRUE, output_format = "matrix")
 knitr::kable(head(lambda[[1]]))
 # Plot
 lambda[[2]]
@@ -304,7 +305,7 @@ Cz computation on bipartite results.
 bip_cz <- bip[, c("node", "module", "cat")]
 colnames(bip_cz) <- c("node", "mod", "cat")
 
-link_cz <- sp_df[, c("site", "sp")] %>%
+link_cz <- sp_df[which(sp_df$pa > 0), c("site", "sp")] %>%
   left_join(bip_cz[which(bip_cz$cat == "site"), c("node", "mod")],
             by = c("site" = "node")) %>%
   rename(mod_site = mod) %>%
@@ -315,6 +316,13 @@ link_cz <- sp_df[, c("site", "sp")] %>%
 cz_bip <- cz(link_dat = link_cz, dat = bip_cz, ab = NULL)
 
 head(cz_bip[[1]])
+
+# Interaction
+lambda <- interact(input_network = "bipartite",
+                   dat = link_cz, plot = TRUE, output_format = "matrix")
+knitr::kable(head(lambda[[1]]))
+# Plot
+lambda[[2]]
 
 ```
 
