@@ -1,25 +1,31 @@
 
-comparison <- function(dat){
+comparison <- function(dat, bio_col, thres = 10){
 
   if(!is.data.frame(dat)){
     stop("Input must be a data.frame with a column containing the sites and
          columns containing different partitions.")
   }
 
-  if(!is.character(sp_col)){
-    stop("sp_col must be a character string corresponding to the column
-    with species.")
+  if(!("site" %in% colnames(dat))){
+    stop("dat must contains a column 'site' with all the sites.")
+  }
+
+  if(!is.numeric(bio_col) & bio_col > ncol(dat)){
+    stop("bio_col must be a numeric indicating which columns of dat contains
+         the different bioregions.")
+  }
+
+  if(!is.numeric(thres)){
+    stop("thres must be a numeric determining the minimum number of pixels
+         per pair.")
   }
 
   # Get matrix with number of bioregions in common per pair of pixels
   list_mat_pair <- list()
-  bio_col <- c(5:9)
   for(i in 1:length(bio_col)){
     list_mat_pair[[i]] <-
-      matrix(outer(all_bioregions[, bio_col[i]],
-                   all_bioregions[, bio_col[i]], "=="),
-             nrow = nrow(all_bioregions),
-             dimnames = list(all_bioregions$site, all_bioregions$site))
+      matrix(outer(dat[, bio_col[i]], dat[, bio_col[i]], "=="),
+             nrow = nrow(dat), dimnames = list(dat$site, dat$site))
   }
   # Sum all matrices
   list_mat_pair <- Reduce('+', list_mat_pair)
@@ -64,11 +70,10 @@ comparison <- function(dat){
   all100$pair_bio <- apply(all100[, bioregion_cols] , 1, paste, collapse = "_")
 
   # Remove pairs of pixels under a threshold of 10 pixels
-  thres <- 10
   thresh <- names(table(all100$pair_bio)[table(all100$pair_bio) > thres])
 
   all100 <- all100[which(all100$pair_bio %in% thresh), ]
 
   # Output: data frame with pixels grouped together through all the methods
-    return(combined_groups)
+  return(all100)
 }

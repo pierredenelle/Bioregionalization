@@ -435,86 +435,8 @@ all_bioregions <- sp_df %>%
   distinct(site, .keep_all = TRUE) %>%
   rename(infomap = module)
 
-# Get matrix with number of bioregions in common per pair of pixels
-list_mat_pair <- list()
-bio_col <- c(5:9)
-for(i in 1:length(bio_col)){
-  list_mat_pair[[i]] <-
-    matrix(outer(all_bioregions[, bio_col[i]],
-                 all_bioregions[, bio_col[i]], "=="),
-           nrow = nrow(all_bioregions), 
-           dimnames = list(all_bioregions$site, all_bioregions$site))
-}
-# Sum all matrices
-list_mat_pair <- Reduce('+', list_mat_pair)
-
-# Get percentage
-list_mat_pair <- 100*list_mat_pair/length(bio_col)
-
-# Conversion to data frame
-list_df_pair <- as.data.frame(as.table(list_mat_pair))
-colnames(list_df_pair) <- c("id1", "id2", "perc")
-
-# Remove false pairs of sites
-list_df_pair <- list_df_pair[which(list_df_pair$id1 != list_df_pair$id2), ]
-
-# Extract pixels together 100% of the time
-all100 <- list_df_pair[which(list_df_pair$perc == 100), ]
-
-# Add bioregion (whatever algorithm since all pixels are grouped together)
-all100 <- left_join(all100,
-                    all_bioregions[, c("site",
-                                       colnames(all_bioregions)[bio_col])],
-                    by = c("id1" = "site"))
-colnames(all100) <- c("id1", "id2", "perc",
-                      paste0(colnames(all_bioregions)[bio_col], "_id1"))
-
-all100 <- left_join(all100,
-                    all_bioregions[, c("site",
-                                       colnames(all_bioregions)[bio_col])],
-                    by = c("id2" = "site"))
-colnames(all100) <- c("id1", "id2", "perc",
-                      paste0(colnames(all_bioregions)[bio_col], "_id1"),
-                      paste0(colnames(all_bioregions)[bio_col], "_id2"))
-
-bioregion_cols <- c(paste0(colnames(all_bioregions)[bio_col], "_id1"),
-                    paste0(colnames(all_bioregions)[bio_col], "_id2"))
-
-# all100$pair_bio <- paste(all100$bio_id1, all100$bio_id2, sep = "_")
-
-# all100$pair_bio <- tidyr::unite_(data,
-#                                  paste(bioregion_cols, collapse = "_"),
-#                                  bioregion_cols)
-all100$pair_bio <- apply(all100[, bioregion_cols] , 1, paste, collapse = "_")
-
-# Remove pairs of pixels under a threshold of 10 pixels
-thres <- 10
-thresh <- names(table(all100$pair_bio)[table(all100$pair_bio) > thres])
-
-all100 <- all100[which(all100$pair_bio %in% thresh), ]
-
-all100 %>%
-  left_join(all_bioregions[, c("site", "x", "y")], by = c("id1" = "site")) %>%
-  distinct(id1, .keep_all = TRUE) %>%
-  st_as_sf(coords = c("x", "y")) %>%
-  group_by(pair_bio) %>%
-  st_cast("MULTIPOINT") %>%
-  summarise() %>%
-  ggplot() +
-  geom_sf(aes(color = as.factor(pair_bio)))
-geom_tile(aes(fill = as.factor(pair_bio), color = as.factor(pair_bio)),
-          alpha = 0.8, width = 1, height = 1)
-
-ggplot(aes(x, y)) +
-  geom_tile(aes(fill = as.factor(pair_bio), color = as.factor(pair_bio)),
-            alpha = 0.8, width = 1, height = 1) +
-  scale_color_viridis_d("Bioregions", option = "E") +
-  scale_fill_viridis_d("Bioregions", option = "E") +
-  # scale_color_brewer("Bioregions", palette = "Paired") +
-  # scale_fill_brewer("Bioregions", palette = "Paired") +
-  coord_equal() +
-  labs(title = "Identical bioregions") +
-  theme(panel.background = element_rect(fill = "transparent", colour = NA))
+# Test of comparison function
+all100 <- comparison(all_bioregions, bio_col = c(5:9))
 
 # Comparison of maps
 plot_grid(
@@ -602,6 +524,19 @@ plot_grid(
     theme(panel.background = element_rect(fill = "transparent", colour = NA)),
   
   nrow = 2)
+
+# Plot with tiles
+all100 %>%
+  left_join(all_bioregions[, c("site", "x", "y")], by = c("id1" = "site")) %>%
+  distinct(id1, .keep_all = TRUE) %>%
+  st_as_sf(coords = c("x", "y")) %>%
+  group_by(pair_bio) %>%
+  st_cast("MULTIPOINT") %>%
+  summarise() %>%
+  ggplot() +
+  geom_sf(aes(color = as.factor(pair_bio)))
+geom_tile(aes(fill = as.factor(pair_bio), color = as.factor(pair_bio)),
+          alpha = 0.8, width = 1, height = 1)
 
 ##
 # sabre package: test between oslom and ward
