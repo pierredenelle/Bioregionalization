@@ -218,13 +218,14 @@ zscores <- zscore(fuzzy, sp_col = "sp", site_col = "site",
 zscores
 
 # Interactions between bioregions
-interact(dat = zscores, plot = FALSE, output_format = "matrix")
+interact(input_network = "projected",
+         dat = zscores, plot = TRUE, output_format = "matrix")
 
 ```
 
 ```{r z_scores}
 # tmp <- left_join(sp_df, oslom_vignette, by = "site")
-tmp <- left_join(sp_df[which(sp_df$pa == 1), ], oslom_vignette, by = "site")
+tmp <- left_join(sp_df[which(sp_df$pa > 0), ], oslom_vignette, by = "site")
 # table(tmp$sp, tmp$bioregion)
 
 z_scores <- zscore(tmp, sp_col = "sp", site_col = "site",
@@ -305,15 +306,8 @@ Cz computation on bipartite results.
 bip_cz <- bip[, c("node", "module", "cat")]
 colnames(bip_cz) <- c("node", "mod", "cat")
 
-link_cz <- sp_df[which(sp_df$pa > 0), c("site", "sp")] %>%
-  left_join(bip_cz[which(bip_cz$cat == "site"), c("node", "mod")],
-            by = c("site" = "node")) %>%
-  rename(mod_site = mod) %>%
-  left_join(bip_cz[which(bip_cz$cat == "sp"), c("node", "mod")],
-            by = c("sp" = "node")) %>%
-  rename(mod_sp = mod)
-
-cz_bip <- cz(link_dat = link_cz, dat = bip_cz, ab = NULL)
+cz_bip <- cz(dat = sp_df[which(sp_df$pa > 0), ], sp_col = "sp",
+             site_col = "site", bip = bip_cz, ab = NULL)
 
 head(cz_bip[[1]])
 
